@@ -19,19 +19,19 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 
 // Game configurations - Using embedded versions and live URLs
 const gameRepos = [
-    {
-        id: 1,
-        name: '2048',
-        description: 'Join the numbers and get to the 2048 tile!',
-        repo: 'gabrielecirulli/2048',
-        stars: '12000+',
-        path: '/games/2048-game.html',
-        thumbnail: '🎯',
-        category: 'Puzzle',
-        difficulty: 'Easy',
-        players: '1 Player',
-        embedUrl: 'https://play2048.co/'
-    },
+    // {
+    //     id: 1,
+    //     name: '2048',
+    //     description: 'Join the numbers and get to the 2048 tile!',
+    //     repo: 'gabrielecirulli/2048',
+    //     stars: '12000+',
+    //     path: '/games/2048-game.html',
+    //     thumbnail: '🎯',
+    //     category: 'Puzzle',
+    //     difficulty: 'Easy',
+    //     players: '1 Player',
+    //     embedUrl: 'https://play2048.co/'
+    // },
     {
         id: 2,
         name: 'Hextris',
