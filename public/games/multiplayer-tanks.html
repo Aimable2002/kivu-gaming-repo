@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplayer Tanks Battle</title>
+    <link rel="stylesheet" href="/css/modern-style.css">
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        #gameCanvas {
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.3);
+        }
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        .game-info {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-dim);
+        }
+        .stats {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin-top: 20px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .stat-box {
+            background: rgba(10, 14, 39, 0.8);
+            padding: 15px 30px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+        .stat-value {
+            font-size: 24px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-header">
+        <a href="/" class="back-link">← Back to Arcade</a>
+        <h1 style="font-family: 'Orbitron', sans-serif; font-size: 42px; margin: 10px 0;">🎮 Multiplayer Tanks</h1>
+    </div>
+
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <div class="stats">
+        <div class="stat-box">
+            <div class="stat-label">Your Score</div>
+            <div class="stat-value" id="score">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Health</div>
+            <div class="stat-value" id="health">100</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">Players</div>
+            <div class="stat-value" id="players">1</div>
+        </div>
+    </div>
+
+    <div class="game-info">
+        <p><strong>Controls:</strong> WASD to move | Mouse to aim | Click to shoot</p>
+        <p>Open in another tab to play with yourself or share URL with friends!</p>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/multiplayer-tanks.js"></script>
+</body>
+</html>
