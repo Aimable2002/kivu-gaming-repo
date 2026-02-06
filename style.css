@@ -1,0 +1,120 @@
+html, body {
+    touch-action: pan-y; /* Разрешаем вертикальный скролл пальцем */
+    overscroll-behavior-y: none; /* Убираем эффект "резинки" всей страницы (чтобы не тянулась вся страница) */
+    height: 100dvh; /* Динамическая высота для мобилок */
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Внешний скролл скрыт, скроллим только блоки внутри */
+    background-color: #000; /* Чтобы за пределами приложения на ПК было черно/серо */
+}
+
+/* Добавляем плавность прокрутки для всех блоков */
+* {
+    -webkit-overflow-scrolling: touch;
+}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.fade-in { animation: fadeIn 0.3s ease-out; }
+.slide-up { animation: slideUp 0.3s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Colors & Buttons */
+.text-kivu-teal { color: #00695C; }
+.bg-kivu-teal { background-color: #00695C; }
+.bg-kivu-bg { background-color: #F5F7FA; }
+.text-kivu-orange { color: #FF6600; }
+.bg-kivu-orange { background-color: #FF6600; }
+.bg-kivu-dark { background-color: #004D40; }
+
+.tab-active { background: #00695C; color: white; }
+.tab-inactive { background: #f3f4f6; color: #6b7280; }
+.lang-btn.active, .curr-btn.active { border-color: #00695C; background-color: #E0F2F1; color: #00695C; }
+
+/* Verification Badge */
+.verified-badge { color: #1DA1F2; margin-left: 4px; position: relative; cursor: pointer; }
+.verified-badge:hover::after {
+    content: "Verified by Platform";
+    position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+    background: #1DA1F2; color: white; font-size: 10px; padding: 4px 6px;
+    border-radius: 4px; white-space: nowrap; pointer-events: none; z-index: 50;
+}
+
+/* Tiered Pricing */
+.tier-line { position: relative; height: 6px; background: #e5e7eb; border-radius: 3px; margin-top: 25px; margin-bottom: 25px; }
+.tier-fill { position: absolute; left: 0; top: 0; height: 100%; background: linear-gradient(90deg, #00695C, #34D399); border-radius: 3px; transition: width 0.5s; }
+.tier-dot { position: absolute; top: -5px; width: 16px; height: 16px; background: white; border: 3px solid #e5e7eb; border-radius: 50%; transform: translateX(-50%); z-index: 10; display: flex; justify-content: center; }
+.tier-dot.active { border-color: #00695C; background: #00695C; }
+.tier-label { position: absolute; top: 18px; font-size: 9px; font-weight: bold; color: #6b7280; white-space: nowrap; }
+.tier-price { position: absolute; top: -20px; font-size: 10px; font-weight: bold; color: #00695C; white-space: nowrap; }
+
+/* Disclaimer Box */
+/* Disclaimer Box - Green */
+.safety-disclaimer {
+    background-color: #E0F2F1; border: 1px solid #00695C; border-radius: 8px;
+    padding: 12px; margin-top: 20px; margin-bottom: 80px; text-align: center;
+}
+.safety-disclaimer p { font-size: 10px; color: #004D40; line-height: 1.4; }
+.safety-disclaimer i { color: #00695C; margin-bottom: 4px; font-size: 16px; }
+
+/* Address Card */
+.addr-card { display: flex; align-items: flex-start; gap: 10px; padding: 12px; background: white; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 10px; }
+.addr-icon { color: #00695C; font-size: 18px; margin-top: 2px; }
+.addr-content { flex: 1; }
+.addr-edit { color: #9CA3AF; padding: 5px; }
+/* Исправление слоев для карт */
+.leaflet-pane { z-index: 0 !important; } 
+.leaflet-control { z-index: 10 !important; }
+.leaflet-top, .leaflet-bottom { z-index: 10 !important; }
+
+/* Чтобы карта выбора при создании объявления была видна */
+#picker-map { z-index: 1; }
+
+.kivu-admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.kivu-admin-table th {
+    background: #2c3e50;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+.kivu-admin-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+.btn-approve {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 4px;
+    width: 100%;
+}
+.btn-reject {
+    background: #c0392b;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+/* --- NEW URGENT SLIDESHOW STYLES --- */
+@keyframes fadeInUrgent {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeInUrgent 0.5s ease-out forwards;
+}

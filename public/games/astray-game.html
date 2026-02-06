@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="mobile-web-app-capable" content="yes">
     <title>Astray 3D Maze</title>
+    <link rel="stylesheet" href="/css/kivu-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0a0e27; overflow: hidden; position: relative; width: 100vw; height: 100vh; }
@@ -24,7 +26,23 @@
     </style>
 </head>
 <body>
-    <a href="/" class="back-btn">← Back</a>
+    <div class="kivu-header">
+        <div class="header-content">
+            <button class="back-btn" onclick="window.location.href='/games.html'">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="logo-section">
+                <i class="fas fa-gamepad text-kivu-teal" style="font-size: 24px;"></i>
+                <span class="logo-text">Game Arcade</span>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="totalGames">0</span>
+                    <span class="stat-label">Games</span>
+                </div>
+            </div>
+        </div>
+    </div>
     <iframe src="https://wwwtyro.github.io/Astray/" allowfullscreen></iframe>
 </body>
 </html>

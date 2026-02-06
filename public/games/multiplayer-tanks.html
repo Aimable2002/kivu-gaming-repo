@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multiplayer Tanks Battle</title>
     <link rel="stylesheet" href="/css/modern-style.css">
+    <link rel="stylesheet" href="/css/kivu-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             margin: 0;
@@ -61,9 +63,22 @@
     </style>
 </head>
 <body>
-    <div class="game-header">
-        <a href="/" class="back-link">← Back to Arcade</a>
-        <h1 style="font-family: 'Orbitron', sans-serif; font-size: 42px; margin: 10px 0;">🎮 Multiplayer Tanks</h1>
+    <div class="kivu-header">
+        <div class="header-content">
+            <button class="back-btn" onclick="window.location.href='/games.html'">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="logo-section">
+                <i class="fas fa-gamepad text-kivu-teal" style="font-size: 24px;"></i>
+                <span class="logo-text">Game Arcade</span>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="totalGames">0</span>
+                    <span class="stat-label">Games</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <canvas id="gameCanvas" width="800" height="600"></canvas>
