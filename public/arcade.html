@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#00695C">
+    <title>Racing Arcade</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Additional styles for game cards */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .game-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .game-card:active {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 105, 92, 0.15);
+        }
+
+        .game-card-header {
+            background: linear-gradient(135deg, #E0F2F1, #B2DFDB);
+            padding: 24px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .game-icon-large {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .game-card-body {
+            padding: 16px;
+        }
+
+        .game-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #004D40;
+            margin-bottom: 8px;
+        }
+
+        .game-description {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .game-meta {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .badge-category {
+            background: #E0F2F1;
+            color: #00695C;
+            border: 1px solid #00695C;
+        }
+
+        .badge-difficulty {
+            background: #FFF3E0;
+            color: #FF6600;
+            border: 1px solid #FF6600;
+        }
+
+        .badge-device {
+            background: #F3E5F5;
+            color: #9C27B0;
+            border: 1px solid #9C27B0;
+        }
+
+        .game-footer {
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .play-btn-kivu {
+            background: #00695C;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .play-btn-kivu:active {
+            transform: scale(0.95);
+            background: #004D40;
+        }
+
+        .device-badge-header {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: #E0F2F1;
+            color: #00695C;
+            font-weight: 700;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .spinner-kivu {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto;
+            border: 4px solid #E0F2F1;
+            border-top-color: #00695C;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Kivu Container */
+        .kivu-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        /* Kivu Header */
+        .kivu-header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 12px;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: 1px solid #e5e7eb;
+            color: #00695C;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
+            background: #E0F2F1;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #004D40;
+        }
+
+        .text-kivu-teal {
+            color: #00695C;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            color: #00695C;
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 10px;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filter-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-tab {
+            background: #f3f4f6;
+            color: #6b7280;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-active {
+            background: #00695C;
+            color: white;
+        }
+
+        .tab-inactive {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .filter-tab:active {
+            transform: scale(0.95);
+        }
+
+        /* Safety Disclaimer */
+        .safety-disclaimer {
+            background-color: #E0F2F1;
+            border: 1px solid #00695C;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+            margin-bottom: 80px;
+            text-align: center;
+        }
+
+        .safety-disclaimer p {
+            font-size: 12px;
+            color: #004D40;
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        .safety-disclaimer i {
+            color: #00695C;
+            font-size: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-stats {
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .filter-tabs {
+                padding: 8px 12px;
+            }
+
+            .filter-tab {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUrgent 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeInUrgent {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="kivu-header">
+        <div class="header-content">
+            <button class="back-btn" onclick="window.location.href='/'">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="logo-section">
+                <i class="fas fa-flag-checkered text-kivu-teal" style="font-size: 24px;"></i>
+                <span class="logo-text">Racing Arcade</span>
+            </div>
+            <div class="header-stats">
+                <span class="device-badge-header" id="deviceBadge">Loading...</span>
+                <div class="stat-item">
+                    <span class="stat-value" id="totalGames">0</span>
+                    <span class="stat-label">Games</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+        <button class="filter-tab tab-active" data-filter="all">
+            <i class="fas fa-th"></i> All Games
+        </button>
+        <button class="filter-tab tab-inactive" data-filter="Easy">
+            <i class="fas fa-smile"></i> Easy
+        </button>
+        <button class="filter-tab tab-inactive" data-filter="Medium">
+            <i class="fas fa-star"></i> Medium
+        </button>
+        <button class="filter-tab tab-inactive" data-filter="Hard">
+            <i class="fas fa-fire"></i> Hard
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="kivu-container">
+        <!-- Loading State -->
+        <div class="loading-state" id="loadingState">
+            <div class="spinner-kivu"></div>
+            <p style="margin-top: 12px; color: #6b7280; font-size: 14px;">Loading racing games...</p>
+        </div>
+
+        <!-- Games Grid -->
+        <div class="games-grid" id="gamesGrid" style="display: none;"></div>
+
+        <!-- Safety Disclaimer -->
+        <div class="safety-disclaimer" id="disclaimer" style="display: none;">
+            <i class="fas fa-info-circle"></i>
+            <p>All games run natively in your browser. Optimized for full-screen racing!</p>
+        </div>
+    </div>
+
+    <script>
+        let allGames = [];
+        let currentFilter = 'all';
+        let deviceType = 'desktop';
+
+        // Fetch games on load
+        async function loadGames() {
+            try {
+                const response = await fetch('/api/games');
+                const data = await response.json();
+                
+                if (data.success && data.games) {
+                    allGames = data.games;
+                    deviceType = data.deviceType;
+                    
+                    displayGames(allGames);
+                    
+                    // Update UI
+                    document.getElementById('totalGames').textContent = data.totalGames;
+                    document.getElementById('deviceBadge').textContent = deviceType === 'mobile' ? '📱 Mobile' : '🖥️ Desktop';
+                    
+                    // Hide loading, show grid
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('gamesGrid').style.display = 'grid';
+                    document.getElementById('disclaimer').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading games:', error);
+                document.getElementById('loadingState').innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="font-size: 48px; color: #FF6600;"></i>
+                    <p style="margin-top: 12px; color: #6b7280;">Failed to load games. Please refresh.</p>
+                `;
+            }
+        }
+
+        function displayGames(games) {
+            const grid = document.getElementById('gamesGrid');
+            
+            if (games.length === 0) {
+                grid.innerHTML = `
+                    <div style="text-align: center; padding: 40px; grid-column: 1/-1;">
+                        <i class="fas fa-inbox" style="font-size: 48px; color: #9CA3AF;"></i>
+                        <p style="margin-top: 12px; color: #6b7280;">No games found for ${deviceType} devices.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = games.map(game => `
+                <div class="game-card animate-fade-in" onclick="window.location.href='${game.path}'">
+                    <div class="game-card-header">
+                        <div class="game-icon-large">${game.thumbnail}</div>
+                    </div>
+                    <div class="game-card-body">
+                        <h3 class="game-name">${game.name}</h3>
+                        <p class="game-description">${game.description}</p>
+                        
+                        <div class="game-meta">
+                            <span class="badge badge-category">${game.category}</span>
+                            <span class="badge badge-difficulty">${game.difficulty}</span>
+                            <span class="badge badge-device">${game.devices.includes('mobile') && game.devices.includes('desktop') ? 'All Devices' : game.devices[0]}</span>
+                        </div>
+                        
+                        <div class="game-footer">
+                            <button class="play-btn-kivu">
+                                <i class="fas fa-play"></i> Play Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter functionality
+        document.querySelectorAll('.filter-tab').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Remove active class from all
+                document.querySelectorAll('.filter-tab').forEach(b => {
+                    b.classList.remove('tab-active');
+                    b.classList.add('tab-inactive');
+                });
+                
+                // Add active class to clicked
+                e.target.classList.remove('tab-inactive');
+                e.target.classList.add('tab-active');
+                
+                const filter = e.target.dataset.filter;
+                currentFilter = filter;
+                
+                if (filter === 'all') {
+                    displayGames(allGames);
+                } else {
+                    const filtered = allGames.filter(game => game.difficulty === filter);
+                    displayGames(filtered);
+                }
+            });
+        });
+
+        // Load games on page load
+        loadGames();
+    </script>
+</body>
+</html>

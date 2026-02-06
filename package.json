@@ -5,10 +5,11 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "setup": "node setup-games.js",
     "dev": "nodemon server.js"
   },
-  "keywords": ["games", "github", "arcade"],
-  "author": "Your Name",
+  "keywords": ["racing", "games", "arcade", "html5", "webview"],
+  "author": "Aimable",
   "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",

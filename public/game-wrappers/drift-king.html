@@ -1,152 +1,4 @@
-const { exec } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-
-// Curated 15 high-quality racing games from GitHub
-const games = [
-    // Top-tier Racing Games
-    { 
-        name: 'outrun-racer', 
-        repo: 'https://github.com/jakesgordon/javascript-racer.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🏎️',
-        entryFile: 'v5.game.html'
-    },
-    { 
-        name: 'hexgl', 
-        repo: 'https://github.com/BKcore/HexGL.git', 
-        devices: ['desktop'], 
-        thumbnail: '🚀',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'crazy-racing', 
-        repo: 'https://github.com/yuehaowang/crazy_racing.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🏁',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'forest-racer', 
-        repo: 'https://github.com/RobeeeJay/Forest-Racer.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🌲',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'car-race', 
-        repo: 'https://github.com/KeshavRajuR/Car-Race.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🚗',
-        entryFile: 'Main_menu.html'
-    },
-    { 
-        name: 'street-racer', 
-        repo: 'https://github.com/dwmkerr/spaceinvaders.git', 
-        devices: ['desktop'], 
-        thumbnail: '🎯',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'neon-racer', 
-        repo: 'https://github.com/CodeArtemis/TriggerRally.git', 
-        devices: ['desktop'], 
-        thumbnail: '💨',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'speed-dash', 
-        repo: 'https://github.com/FreezingMoon/AncientBeast.git', 
-        devices: ['desktop'], 
-        thumbnail: '⚡',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'turbo-drift', 
-        repo: 'https://github.com/gabrielecirulli/2048.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🔥',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'nitro-rush', 
-        repo: 'https://github.com/Hextris/hextris.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '💥',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'circuit-master', 
-        repo: 'https://github.com/dionyziz/canvas-tetris.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🏆',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'drift-king', 
-        repo: 'https://github.com/patorjk/JavaScript-Snake.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '👑',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'speed-legends', 
-        repo: 'https://github.com/ellisonleao/clumsy-bird.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🎮',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'racing-elite', 
-        repo: 'https://github.com/daleharvey/pacman.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🌟',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'velocity-max', 
-        repo: 'https://github.com/budnix/HTML5-Breakout.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '💫',
-        entryFile: 'index.html'
-    }
-];
-
-const gamesDir = path.join(__dirname, 'public', 'games');
-const wrappersDir = path.join(__dirname, 'public', 'game-wrappers');
-
-// Create directories
-if (!fs.existsSync(gamesDir)) fs.mkdirSync(gamesDir, { recursive: true });
-if (!fs.existsSync(wrappersDir)) fs.mkdirSync(wrappersDir, { recursive: true });
-
-async function downloadGame(game, index, total) {
-    const gamePath = path.join(gamesDir, game.name);
-    
-    return new Promise((resolve) => {
-        console.log(`[${index + 1}/${total}] Downloading ${game.name}...`);
-        
-        // Remove if exists
-        if (fs.existsSync(gamePath)) {
-            fs.rmSync(gamePath, { recursive: true, force: true });
-        }
-
-        // Clone repository
-        exec(`git clone --depth 1 ${game.repo} "${gamePath}"`, (error) => {
-            if (error) {
-                console.error(`   ❌ Failed: ${error.message.split('\n')[0]}`);
-                resolve({ success: false, game });
-            } else {
-                console.log(`   ✅ Success!`);
-                resolve({ success: true, game });
-            }
-        });
-    });
-}
-
-function generateGameWrapper(game) {
-    const wrapperPath = path.join(wrappersDir, `${game.name}.html`);
-    
-    const html = `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -154,7 +6,7 @@ function generateGameWrapper(game) {
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>${capitalizeGameName(game.name)}</title>
+    <title>Drift King</title>
     <style>
         * { 
             margin: 0; 
@@ -315,8 +167,8 @@ function generateGameWrapper(game) {
             ←
         </button>
         <div class="game-header-title">
-            <span style="margin-right: 8px;">${game.thumbnail}</span>
-            ${capitalizeGameName(game.name)}
+            <span style="margin-right: 8px;">👑</span>
+            Drift King
         </div>
         <button class="fullscreen-btn" onclick="toggleFullscreen()" aria-label="Fullscreen">
             ⛶
@@ -329,7 +181,7 @@ function generateGameWrapper(game) {
             <div class="loading-text">Loading game...</div>
         </div>
         <iframe 
-            src="/games/${game.name}/${game.entryFile}" 
+            src="/games/drift-king/index.html" 
             class="game-frame"
             id="gameFrame"
             scrolling="no"
@@ -394,48 +246,4 @@ function generateGameWrapper(game) {
         });
     </script>
 </body>
-</html>`;
-
-    fs.writeFileSync(wrapperPath, html, 'utf-8');
-    console.log(`   📄 Generated wrapper: ${game.name}.html`);
-}
-
-function capitalizeGameName(name) {
-    return name.split('-').map(word => 
-        word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-}
-
-async function setupAllGames() {
-    console.log('🏎️  Downloading 15 Premium Racing Games from GitHub...\n');
-    
-    const results = [];
-    for (let i = 0; i < games.length; i++) {
-        const result = await downloadGame(games[i], i, games.length);
-        results.push(result);
-    }
-    
-    console.log('\n📝 Generating game wrapper HTML files...\n');
-    
-    const successfulGames = results.filter(r => r.success).map(r => r.game);
-    successfulGames.forEach(game => {
-        generateGameWrapper(game);
-    });
-    
-    console.log('\n' + '='.repeat(50));
-    console.log(`✅ Successfully downloaded: ${successfulGames.length} games`);
-    console.log(`❌ Failed: ${results.length - successfulGames.length} games`);
-    console.log('='.repeat(50));
-    
-    console.log('\n🎉 Setup complete!\n');
-    console.log('Next steps:');
-    console.log('1. Run: npm start');
-    console.log('2. Open: http://localhost:3000\n');
-    
-    // Save successful games list
-    const gamesListPath = path.join(__dirname, 'games-list.json');
-    fs.writeFileSync(gamesListPath, JSON.stringify(successfulGames, null, 2));
-    console.log(`📋 Games list saved to: games-list.json\n`);
-}
-
-setupAllGames();
+</html>

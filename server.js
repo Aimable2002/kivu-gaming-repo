@@ -2,8 +2,8 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
-const axios = require('axios');
 const cors = require('cors');
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
@@ -15,267 +15,108 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
-
-// Game configurations - Using embedded versions and live URLs
-const gameRepos = [
-    // {
-    //     id: 1,
-    //     name: '2048',
-    //     description: 'Join the numbers and get to the 2048 tile!',
-    //     repo: 'gabrielecirulli/2048',
-    //     stars: '12000+',
-    //     path: '/games/2048-game.html',
-    //     thumbnail: '🎯',
-    //     category: 'Puzzle',
-    //     difficulty: 'Easy',
-    //     players: '1 Player',
-    //     embedUrl: 'https://play2048.co/'
-    // },
-    {
-        id: 2,
-        name: 'Hextris',
-        description: 'Fast paced puzzle game inspired by Tetris',
-        repo: 'Hextris/hextris',
-        stars: '2000+',
-        path: '/games/hextris-game.html',
-        thumbnail: '⬡',
-        category: 'Puzzle',
-        difficulty: 'Medium',
-        players: '1 Player',
-        embedUrl: 'https://hextris.io/'
-    },
-    {
-        id: 3,
-        name: 'Pacman',
-        description: 'Classic Pacman game in JavaScript',
-        repo: 'daleharvey/pacman',
-        stars: '800+',
-        path: '/games/pacman-game.html',
-        thumbnail: '👻',
-        category: 'Arcade',
-        difficulty: 'Medium',
-        players: '1 Player',
-        embedUrl: 'https://pacman.platzh1rsch.ch/'
-    },
-    {
-        id: 4,
-        name: 'HexGL',
-        description: 'Futuristic HTML5 racing game',
-        repo: 'BKcore/HexGL',
-        stars: '1500+',
-        path: '/games/hexgl-game.html',
-        thumbnail: '🏎️',
-        category: 'Racing',
-        difficulty: 'Hard',
-        players: '1 Player',
-        embedUrl: 'https://hexgl.bkcore.com/'
-    },
-    {
-        id: 5,
-        name: 'Astray',
-        description: '3D Maze game built with Three.js',
-        repo: 'wwwtyro/Astray',
-        stars: '500+',
-        path: '/games/astray-game.html',
-        thumbnail: '🌀',
-        category: '3D',
-        difficulty: 'Medium',
-        players: '1 Player',
-        embedUrl: 'https://wwwtyro.github.io/Astray/'
-    },
-    {
-        id: 6,
-        name: 'Multiplayer Tanks',
-        description: 'Real-time multiplayer tank battle',
-        repo: 'custom/multiplayer-tanks',
-        stars: 'Custom',
-        path: '/games/multiplayer-tanks.html',
-        thumbnail: '🎮',
-        category: 'Multiplayer',
-        difficulty: 'Medium',
-        players: '2+ Players'
-    }
-];
-
-// API Routes
-
-// Health check for Render
-app.get('/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-// Get all games with GitHub stats
-app.get('/api/games', async (req, res) => {
-    try {
-        const gamesWithStats = await Promise.all(
-            gameRepos.map(async (game) => {
-                // Skip GitHub API for custom games
-                if (game.repo.startsWith('custom/')) {
-                    return game;
-                }
-
-                try {
-                    // Fetch GitHub stats
-                    const response = await axios.get(
-                        `https://api.github.com/repos/${game.repo}`,
-                        {
-                            headers: GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {},
-                            timeout: 5000 // 5 second timeout
-                        }
-                    );
-
-                    return {
-                        ...game,
-                        realStars: response.data.stargazers_count,
-                        forks: response.data.forks_count,
-                        lastUpdated: response.data.updated_at,
-                        githubUrl: response.data.html_url,
-                        language: response.data.language,
-                        description: response.data.description || game.description
-                    };
-                } catch (error) {
-                    console.log(`Failed to fetch GitHub data for ${game.repo}:`, error.message);
-                    // Return game with default data if GitHub API fails
-                    return {
-                        ...game,
-                        githubUrl: `https://github.com/${game.repo}`
-                    };
-                }
-            })
-        );
-
-        res.json({
-            success: true,
-            games: gamesWithStats,
-            totalGames: gamesWithStats.length
-        });
-    } catch (error) {
-        console.error('Error fetching games:', error);
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Get single game details
-app.get('/api/games/:id', async (req, res) => {
-    const game = gameRepos.find(g => g.id === parseInt(req.params.id));
-    
-    if (!game) {
-        return res.status(404).json({ success: false, error: 'Game not found' });
-    }
-
-    res.json({ success: true, game });
-});
-
-// Serve game pages
-app.get('/games/:gameName', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'games', req.params.gameName));
-});
-
-// WebSocket for multiplayer
-const rooms = {};
-
-io.on('connection', (socket) => {
-    console.log('Player connected:', socket.id);
-
-    socket.on('joinRoom', (roomId) => {
-        if (!rooms[roomId]) {
-            rooms[roomId] = {
-                players: [],
-                tanks: {}
-            };
-        }
-
-        socket.join(roomId);
-        rooms[roomId].players.push(socket.id);
-        rooms[roomId].tanks[socket.id] = {
-            x: Math.random() * 700 + 50,
-            y: Math.random() * 500 + 50,
-            angle: 0,
-            health: 100,
-            score: 0
-        };
-
-        socket.emit('joined', {
-            playerId: socket.id,
-            roomState: rooms[roomId]
-        });
-
-        io.to(roomId).emit('playerJoined', {
-            playerId: socket.id,
-            playerCount: rooms[roomId].players.length
-        });
-
-        console.log(`Player ${socket.id} joined room ${roomId}`);
+// Serve downloaded games
+const gamesDir = path.join(__dirname, 'public', 'games');
+if (fs.existsSync(gamesDir)) {
+    fs.readdirSync(gamesDir).forEach(gameFolder => {
+        app.use(`/games/${gameFolder}`, express.static(path.join(gamesDir, gameFolder)));
     });
-
-    socket.on('move', (data) => {
-        const room = findPlayerRoom(socket.id);
-        if (room && rooms[room].tanks[socket.id]) {
-            rooms[room].tanks[socket.id].x = data.x;
-            rooms[room].tanks[socket.id].y = data.y;
-            rooms[room].tanks[socket.id].angle = data.angle;
-            
-            io.to(room).emit('gameState', rooms[room]);
-        }
-    });
-
-    socket.on('shoot', (data) => {
-        const room = findPlayerRoom(socket.id);
-        if (room) {
-            io.to(room).emit('bulletFired', {
-                playerId: socket.id,
-                bullet: data
-            });
-        }
-    });
-
-    socket.on('hit', (data) => {
-        const room = findPlayerRoom(socket.id);
-        if (room && rooms[room].tanks[data.targetId]) {
-            rooms[room].tanks[data.targetId].health -= 10;
-            rooms[room].tanks[socket.id].score += 10;
-
-            if (rooms[room].tanks[data.targetId].health <= 0) {
-                rooms[room].tanks[data.targetId].health = 100;
-                rooms[room].tanks[data.targetId].x = Math.random() * 700 + 50;
-                rooms[room].tanks[data.targetId].y = Math.random() * 500 + 50;
-            }
-
-            io.to(room).emit('gameState', rooms[room]);
-        }
-    });
-
-    socket.on('disconnect', () => {
-        const room = findPlayerRoom(socket.id);
-        if (room && rooms[room]) {
-            rooms[room].players = rooms[room].players.filter(p => p !== socket.id);
-            delete rooms[room].tanks[socket.id];
-
-            if (rooms[room].players.length === 0) {
-                delete rooms[room];
-            } else {
-                io.to(room).emit('playerLeft', { playerId: socket.id });
-            }
-        }
-        console.log('Player disconnected:', socket.id);
-    });
-});
-
-function findPlayerRoom(playerId) {
-    for (let room in rooms) {
-        if (rooms[room].players.includes(playerId)) {
-            return room;
-        }
-    }
-    return null;
 }
+
+// Load games from auto-generated list
+let gameConfigs = [];
+const gamesListPath = path.join(__dirname, 'games-list.json');
+
+if (fs.existsSync(gamesListPath)) {
+    const downloadedGames = JSON.parse(fs.readFileSync(gamesListPath, 'utf-8'));
+    
+    // Racing game descriptions
+    const descriptionMap = {
+        'outrun-racer': 'Classic Outrun-style pseudo 3D racing experience',
+        'hexgl': 'Futuristic anti-gravity racing at breakneck speeds',
+        'crazy-racing': 'Fast-paced top-down racing with tight controls',
+        'forest-racer': 'Navigate through dense forests at high speed',
+        'car-race': 'Competitive street racing with multiple modes',
+        'street-racer': 'Urban racing through city streets',
+        'neon-racer': 'Race through neon-lit cyberpunk circuits',
+        'speed-dash': 'Lightning-fast arcade racing action',
+        'turbo-drift': 'Master the art of drifting around corners',
+        'nitro-rush': 'Boost-powered high-octane racing',
+        'circuit-master': 'Professional circuit racing simulator',
+        'drift-king': 'Become the ultimate drift champion',
+        'speed-legends': 'Legendary racing through iconic tracks',
+        'racing-elite': 'Elite racing competition experience',
+        'velocity-max': 'Maximum velocity racing thrills'
+    };
+
+    const difficultyMap = {
+        'outrun-racer': 'Medium',
+        'hexgl': 'Hard',
+        'crazy-racing': 'Medium',
+        'forest-racer': 'Medium',
+        'car-race': 'Easy',
+        'street-racer': 'Medium',
+        'neon-racer': 'Hard',
+        'speed-dash': 'Easy',
+        'turbo-drift': 'Hard',
+        'nitro-rush': 'Medium',
+        'circuit-master': 'Hard',
+        'drift-king': 'Hard',
+        'speed-legends': 'Medium',
+        'racing-elite': 'Hard',
+        'velocity-max': 'Medium'
+    };
+
+    gameConfigs = downloadedGames.map((game, index) => ({
+        id: index + 1,
+        name: game.name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        description: descriptionMap[game.name] || 'Thrilling racing action',
+        category: 'Racing',
+        difficulty: difficultyMap[game.name] || 'Medium',
+        devices: game.devices,
+        thumbnail: game.thumbnail,
+        path: `/game-wrappers/${game.name}.html`
+    }));
+}
+
+// API: Get games filtered by device
+app.get('/api/games', (req, res) => {
+    const userAgent = req.headers['user-agent'] || '';
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    
+    const filteredGames = gameConfigs.filter(game => {
+        if (isMobile) {
+            return game.devices.includes('mobile');
+        } else {
+            return game.devices.includes('desktop');
+        }
+    });
+
+    res.json({
+        success: true,
+        games: filteredGames,
+        totalGames: filteredGames.length,
+        deviceType: isMobile ? 'mobile' : 'desktop'
+    });
+});
+
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok' });
+});
+
+app.get('/arcade.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'arcade.html'));
+});
 
 server.listen(PORT, () => {
     console.log(`
+╔═══════════════════════════════════════════╗
+║   🏎️  RACING GAME ARCADE RUNNING 🏎️       ║
+╚═══════════════════════════════════════════╝
 
-Server: http://localhost:${PORT}
-API: http://localhost:${PORT}/api/games
-Environment: ${process.env.NODE_ENV || 'development'}
+🌐 Server: http://localhost:${PORT}
+🏁 ${gameConfigs.length} Racing Games Loaded
+🎯 Device-Aware Filtering Enabled
+💨 Full-Screen Racing Experience
     `);
 });
