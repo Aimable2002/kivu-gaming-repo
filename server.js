@@ -32,7 +32,6 @@ if (fs.existsSync(gamesListPath)) {
     
     // Racing game descriptions
     const descriptionMap = {
-        'outrun-racer': 'Classic Outrun-style pseudo 3D racing experience',
         'hexgl': 'Futuristic anti-gravity racing at breakneck speeds',
         'crazy-racing': 'Fast-paced top-down racing with tight controls',
         'forest-racer': 'Navigate through dense forests at high speed',
@@ -50,7 +49,6 @@ if (fs.existsSync(gamesListPath)) {
     };
 
     const difficultyMap = {
-        'outrun-racer': 'Medium',
         'hexgl': 'Hard',
         'crazy-racing': 'Medium',
         'forest-racer': 'Medium',

@@ -5,17 +5,17 @@ const path = require('path');
 // Curated 15 high-quality racing games from GitHub
 const games = [
     // Top-tier Racing Games
-    { 
-        name: 'outrun-racer', 
-        repo: 'https://github.com/jakesgordon/javascript-racer.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🏎️',
-        entryFile: 'v5.game.html'
-    },
+    // { 
+    //     name: 'outrun-racer', 
+    //     repo: 'https://github.com/jakesgordon/javascript-racer.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🏎️',
+    //     entryFile: 'v5.game.html'
+    // },
     { 
         name: 'hexgl', 
         repo: 'https://github.com/BKcore/HexGL.git', 
-        devices: ['desktop'], 
+        devices: ['desktop, mobile'], 
         thumbnail: '🚀',
         entryFile: 'index.html'
     },
@@ -36,7 +36,7 @@ const games = [
     { 
         name: 'car-race', 
         repo: 'https://github.com/KeshavRajuR/Car-Race.git', 
-        devices: ['desktop', 'mobile'], 
+        devices: ['desktop'], 
         thumbnail: '🚗',
         entryFile: 'Main_menu.html'
     },
@@ -50,14 +50,14 @@ const games = [
     { 
         name: 'neon-racer', 
         repo: 'https://github.com/CodeArtemis/TriggerRally.git', 
-        devices: ['desktop'], 
+        devices: ['desktop, mobile'], 
         thumbnail: '💨',
         entryFile: 'index.html'
     },
     { 
         name: 'speed-dash', 
         repo: 'https://github.com/FreezingMoon/AncientBeast.git', 
-        devices: ['desktop'], 
+        devices: ['desktop, mobile'], 
         thumbnail: '⚡',
         entryFile: 'index.html'
     },
