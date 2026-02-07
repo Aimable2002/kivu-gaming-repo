@@ -6,8 +6,8 @@ const path = require('path');
 const games = [
     // Top-tier Racing Games
     // { 
-    //     name: 'outrun-racer', 
-    //     repo: 'https://github.com/jakesgordon/javascript-racer.git', 
+    //     name: 'arcad-racer', 
+    //     repo: 'https://github.com/SergeyMakeev/ArcadeCarPhysics.git', 
     //     devices: ['desktop', 'mobile'], 
     //     thumbnail: '🏎️',
     //     entryFile: 'v5.game.html'
@@ -24,13 +24,6 @@ const games = [
         repo: 'https://github.com/yuehaowang/crazy_racing.git', 
         devices: ['desktop', 'mobile'], 
         thumbnail: '🏁',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'forest-racer', 
-        repo: 'https://github.com/RobeeeJay/Forest-Racer.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🌲',
         entryFile: 'index.html'
     },
     { 
@@ -78,15 +71,8 @@ const games = [
     { 
         name: 'circuit-master', 
         repo: 'https://github.com/dionyziz/canvas-tetris.git', 
-        devices: ['desktop', 'mobile'], 
+        devices: ['desktop'], 
         thumbnail: '🏆',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'drift-king', 
-        repo: 'https://github.com/patorjk/JavaScript-Snake.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '👑',
         entryFile: 'index.html'
     },
     { 

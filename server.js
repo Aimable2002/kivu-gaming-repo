@@ -34,7 +34,6 @@ if (fs.existsSync(gamesListPath)) {
     const descriptionMap = {
         'hexgl': 'Futuristic anti-gravity racing at breakneck speeds',
         'crazy-racing': 'Fast-paced top-down racing with tight controls',
-        'forest-racer': 'Navigate through dense forests at high speed',
         'car-race': 'Competitive street racing with multiple modes',
         'street-racer': 'Urban racing through city streets',
         'neon-racer': 'Race through neon-lit cyberpunk circuits',
@@ -42,7 +41,6 @@ if (fs.existsSync(gamesListPath)) {
         'turbo-drift': 'Master the art of drifting around corners',
         'nitro-rush': 'Boost-powered high-octane racing',
         'circuit-master': 'Professional circuit racing simulator',
-        'drift-king': 'Become the ultimate drift champion',
         'speed-legends': 'Legendary racing through iconic tracks',
         'racing-elite': 'Elite racing competition experience',
         'velocity-max': 'Maximum velocity racing thrills'
@@ -51,7 +49,6 @@ if (fs.existsSync(gamesListPath)) {
     const difficultyMap = {
         'hexgl': 'Hard',
         'crazy-racing': 'Medium',
-        'forest-racer': 'Medium',
         'car-race': 'Easy',
         'street-racer': 'Medium',
         'neon-racer': 'Hard',
@@ -59,7 +56,6 @@ if (fs.existsSync(gamesListPath)) {
         'turbo-drift': 'Hard',
         'nitro-rush': 'Medium',
         'circuit-master': 'Hard',
-        'drift-king': 'Hard',
         'speed-legends': 'Medium',
         'racing-elite': 'Hard',
         'velocity-max': 'Medium'
