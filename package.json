@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "setup": "node setup-games.js",
+    "setup": "node fix-paths.js && node setup-games.js",
     "dev": "nodemon server.js"
   },
   "keywords": ["racing", "games", "arcade", "html5", "webview"],

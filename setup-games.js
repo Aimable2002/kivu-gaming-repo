@@ -11,90 +11,90 @@ const games = [
         thumbnail: '🧱',
         entryFile: 'public/index.html'
     },
-    // { 
-    //     name: 'hexgl', 
-    //     repo: 'https://github.com/BKcore/HexGL.git', 
-    //     devices: ['desktop, mobile'], 
-    //     thumbnail: '🚀',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'crazy-racing', 
-    //     repo: 'https://github.com/yuehaowang/crazy_racing.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🏁',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'car-race', 
-    //     repo: 'https://github.com/KeshavRajuR/Car-Race.git', 
-    //     devices: ['desktop'], 
-    //     thumbnail: '🚗',
-    //     entryFile: 'Main_menu.html'
-    // },
-    // { 
-    //     name: 'street-racer', 
-    //     repo: 'https://github.com/dwmkerr/spaceinvaders.git', 
-    //     devices: ['desktop'], 
-    //     thumbnail: '🎯',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'neon-racer', 
-    //     repo: 'https://github.com/CodeArtemis/TriggerRally.git', 
-    //     devices: ['desktop, mobile'], 
-    //     thumbnail: '💨',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'speed-dash', 
-    //     repo: 'https://github.com/FreezingMoon/AncientBeast.git', 
-    //     devices: ['desktop, mobile'], 
-    //     thumbnail: '⚡',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'turbo-drift', 
-    //     repo: 'https://github.com/gabrielecirulli/2048.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🔥',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'nitro-rush', 
-    //     repo: 'https://github.com/Hextris/hextris.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '💥',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'circuit-master', 
-    //     repo: 'https://github.com/dionyziz/canvas-tetris.git', 
-    //     devices: ['desktop'], 
-    //     thumbnail: '🏆',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'speed-legends', 
-    //     repo: 'https://github.com/ellisonleao/clumsy-bird.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🎮',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'racing-elite', 
-    //     repo: 'https://github.com/daleharvey/pacman.git', 
-    //     devices: ['desktop'], 
-    //     thumbnail: '🌟',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'velocity-max', 
-    //     repo: 'https://github.com/budnix/HTML5-Breakout.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '💫',
-    //     entryFile: 'index.html'
-    // }
+    { 
+        name: 'hexgl', 
+        repo: 'https://github.com/BKcore/HexGL.git', 
+        devices: ['desktop, mobile'], 
+        thumbnail: '🚀',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'crazy-racing', 
+        repo: 'https://github.com/yuehaowang/crazy_racing.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🏁',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'car-race', 
+        repo: 'https://github.com/KeshavRajuR/Car-Race.git', 
+        devices: ['desktop'], 
+        thumbnail: '🚗',
+        entryFile: 'Main_menu.html'
+    },
+    { 
+        name: 'street-racer', 
+        repo: 'https://github.com/dwmkerr/spaceinvaders.git', 
+        devices: ['desktop'], 
+        thumbnail: '🎯',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'neon-racer', 
+        repo: 'https://github.com/CodeArtemis/TriggerRally.git', 
+        devices: ['desktop, mobile'], 
+        thumbnail: '💨',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'speed-dash', 
+        repo: 'https://github.com/FreezingMoon/AncientBeast.git', 
+        devices: ['desktop, mobile'], 
+        thumbnail: '⚡',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'turbo-drift', 
+        repo: 'https://github.com/gabrielecirulli/2048.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🔥',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'nitro-rush', 
+        repo: 'https://github.com/Hextris/hextris.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '💥',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'circuit-master', 
+        repo: 'https://github.com/dionyziz/canvas-tetris.git', 
+        devices: ['desktop'], 
+        thumbnail: '🏆',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'speed-legends', 
+        repo: 'https://github.com/ellisonleao/clumsy-bird.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🎮',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'racing-elite', 
+        repo: 'https://github.com/daleharvey/pacman.git', 
+        devices: ['desktop'], 
+        thumbnail: '🌟',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'velocity-max', 
+        repo: 'https://github.com/budnix/HTML5-Breakout.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '💫',
+        entryFile: 'index.html'
+    }
 ];
 
 const gamesDir = path.join(__dirname, 'public', 'games');
