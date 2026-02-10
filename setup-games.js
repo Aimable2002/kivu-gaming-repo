@@ -4,14 +4,13 @@ const path = require('path');
 
 // Curated 15 high-quality racing games from GitHub
 const games = [
-    // Top-tier Racing Games
-    // { 
-    //     name: 'arcad-racer', 
-    //     repo: 'https://github.com/SergeyMakeev/ArcadeCarPhysics.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🏎️',
-    //     entryFile: 'v5.game.html'
-    // },
+    {
+        name: 'threejs-cannon',
+        repo: 'https://github.com/VeinSyct/ThreeJsCannon.git',
+        devices: ['mobile'],
+        thumbnail: '🧱',
+        entryFile: 'public/index.html'
+    },
     { 
         name: 'hexgl', 
         repo: 'https://github.com/BKcore/HexGL.git', 
