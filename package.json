@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "setup": "node setup-games.js && node fix-paths.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "build": "npm run setup"
   },
   "keywords": ["racing", "games", "arcade", "html5", "webview"],
   "author": "Aimable",
