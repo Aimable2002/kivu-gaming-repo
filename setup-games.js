@@ -2,423 +2,518 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// COMPREHENSIVE 50 GAMES ARRAY - All 3D Mobile-Optimized Games
-// Organized by categories: Racing, Puzzle, Soldier/Shooter, Driving, Sports, Adventure, etc.
-
 const games = [
     // ========== RACING GAMES (10) ==========
     { 
-        name: 'hexgl', 
-        repo: 'https://github.com/BKcore/HexGL.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🚀',
-        category: 'Racing',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'triggersrally', 
-        repo: 'https://github.com/CodeArtemis/TriggerRally.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🏎️',
-        category: 'Racing',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'kart-racing', 
-        repo: 'https://github.com/Prozi/kart-racing.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🏁',
-        category: 'Racing',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'webgl-racing', 
-        repo: 'https://github.com/TheRealBluesun/webgl-racing.git', 
-        devices: ['desktop', 'mobile'], 
+        name: 'crazy-car-online-racing', 
+        repo: 'https://github.com/TastSong/CrazyCar.git', 
+        devices: ['mobile'], 
         thumbnail: '🚗',
         category: 'Racing',
+        description: 'Online multiplayer car racing for mobile with SpringBoot backend',
+        quality: 'High',
         entryFile: 'index.html'
     },
     { 
-        name: 'crazy-racing', 
-        repo: 'https://github.com/yuehaowang/crazy_racing.git', 
-        devices: ['desktop', 'mobile'], 
+        name: 'unity-mario-kart-mobile', 
+        repo: 'https://github.com/Ishaan35/Unity3D-Mario-Kart-Racing-Game.git', 
+        devices: ['mobile'], 
+        thumbnail: '🏎️',
+        category: 'Racing',
+        description: 'Mario Kart 3D with anti-gravity, items, AI opponents, mobile controls',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'mobile-racing-game', 
+        repo: 'https://github.com/ramshabilal/3d-car-racing-game-unity.git', 
+        devices: ['mobile'], 
+        thumbnail: '🏁',
+        category: 'Racing',
+        description: '3D racing with terrain, AI opponents, mobile touch controls',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'car-racing-multiplayer-mobile', 
+        repo: 'https://github.com/adrianmoo2/Car-Racing-Multiplayer.git', 
+        devices: ['mobile'], 
         thumbnail: '🏆',
         category: 'Racing',
+        description: 'Multiplayer car racing for mobile and web with leaderboards',
+        quality: 'High',
         entryFile: 'index.html'
     },
     { 
-        name: 'neon-racer', 
-        repo: 'https://github.com/Prozi/racing-game-3d.git', 
-        devices: ['desktop', 'mobile'], 
+        name: 'simple-racing-mobile', 
+        repo: 'https://github.com/CatOstrovsky/simple-racing.git', 
+        devices: ['mobile'], 
+        thumbnail: '🚙',
+        category: 'Racing',
+        description: 'Simple mobile racing game for Android/iOS',
+        quality: 'Medium',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'tap-drift-endless', 
+        repo: 'https://github.com/lucaxue/Tap-Drift.git', 
+        devices: ['mobile'], 
         thumbnail: '💨',
         category: 'Racing',
+        description: 'Endless drifting racing game for iOS and Android',
+        quality: 'High',
         entryFile: 'index.html'
     },
     { 
-        name: 'turbo-drift', 
-        repo: 'https://github.com/particle-clicker/particle-clicker.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🔥',
+        name: 'unity-car-game-mobile', 
+        repo: 'https://github.com/ChadCSong/Unity3DCarGameSample.git', 
+        devices: ['mobile'], 
+        thumbnail: '🎮',
         category: 'Racing',
+        description: 'Mobile touch control car racing with EasyTouch integration',
+        quality: 'Medium',
         entryFile: 'index.html'
     },
     { 
-        name: 'nitro-rush', 
-        repo: 'https://github.com/jakesgordon/javascript-racer.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '💥',
+        name: 'race-car-mobile-rewards', 
+        repo: 'https://github.com/MontaLabidi/Race-Car-Unity-3D.git', 
+        devices: ['mobile'], 
+        thumbnail: '🚘',
         category: 'Racing',
+        description: 'Racing game with reward system to unlock cars on mobile',
+        quality: 'Medium',
         entryFile: 'index.html'
     },
     { 
-        name: 'speed-legends', 
-        repo: 'https://github.com/Zolmeister/prism.git', 
-        devices: ['desktop', 'mobile'], 
+        name: 'android-cars-racing', 
+        repo: 'https://github.com/xtephan/Cars.git', 
+        devices: ['mobile'], 
+        thumbnail: '🚗',
+        category: 'Racing',
+        description: 'Car racing game for Android with touch controls',
+        quality: 'Medium',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'endless-traffic-racer', 
+        repo: 'https://github.com/shhridoy/2D-Racing-Game.git', 
+        devices: ['mobile'], 
+        thumbnail: '🏙️',
+        category: 'Racing',
+        description: '2D racing game for Android mobile with traffic',
+        quality: 'Medium',
+        entryFile: 'index.html'
+    },
+
+    // ========== ENDLESS RUNNER/PLATFORMER (10) ==========
+    { 
+        name: 'infinite-runner-3d-mobile', 
+        repo: 'https://github.com/dgkanatsios/InfiniteRunner3D.git', 
+        devices: ['mobile'], 
+        thumbnail: '🏃',
+        category: 'Runner',
+        description: 'Temple Run/Subway Surfers style 3D endless runner for mobile',
+        quality: 'AAA',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'subway-surfers-unity', 
+        repo: 'https://github.com/semahkadri/SubwaySurfers-unity.git', 
+        devices: ['mobile'], 
+        thumbnail: '🚇',
+        category: 'Runner',
+        description: 'Full Subway Surfers clone with 3D graphics and mobile controls',
+        quality: 'AAA',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'subway-runner-mobile', 
+        repo: 'https://github.com/wfei26/Unity-3D-Game.git', 
+        devices: ['mobile'], 
         thumbnail: '🎯',
-        category: 'Racing',
+        category: 'Runner',
+        description: '3D endless running for iOS with gestures: jump, slide, move',
+        quality: 'High',
         entryFile: 'index.html'
     },
     { 
-        name: 'velocity-max', 
-        repo: 'https://github.com/budnix/ball-pool.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '💫',
-        category: 'Racing',
+        name: 'subway-surfers-remake', 
+        repo: 'https://github.com/bfagiolo/Subway-Surfers-Remake.git', 
+        devices: ['mobile'], 
+        thumbnail: '🎨',
+        category: 'Runner',
+        description: '3D endless runner with custom Blender assets and animations',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'temple-run-mobile-clone', 
+        repo: 'https://github.com/totai02/SoftwareEngineer_Game.git', 
+        devices: ['mobile'], 
+        thumbnail: '⛩️',
+        category: 'Runner',
+        description: 'Temple Run inspired game for Android/iOS',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'endless-runner-mobile-game', 
+        repo: 'https://github.com/AkashDP28/Unity-Android-Game-Subway_Runner_2-D-.git', 
+        devices: ['mobile'], 
+        thumbnail: '🏃‍♂️',
+        category: 'Runner',
+        description: 'Subway runner style game for Android',
+        quality: 'Medium',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'lets-run-mobile', 
+        repo: 'https://github.com/dgkanatsios/LetsRun.git', 
+        devices: ['mobile'], 
+        thumbnail: '🎪',
+        category: 'Runner',
+        description: 'Endless runner with power-ups, avatars, shop system for mobile',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'valley-of-cubes-mobile', 
+        repo: 'https://github.com/muhammadtalhasultan/Valley-Of-Cubes.git', 
+        devices: ['mobile'], 
+        thumbnail: '🧊',
+        category: 'Runner',
+        description: '3D Bluk game replica for mobile devices',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'crossy-road-mobile-clone', 
+        repo: 'https://github.com/lucaxue/Crossy-Road.git', 
+        devices: ['mobile'], 
+        thumbnail: '🐔',
+        category: 'Runner',
+        description: 'Crossy Road style infinite runner for mobile',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'dino-endless-runner', 
+        repo: 'https://github.com/dgkanatsios/DinoRunner.git', 
+        devices: ['mobile'], 
+        thumbnail: '🦖',
+        category: 'Runner',
+        description: 'Dinosaur endless runner game for mobile',
+        quality: 'Medium',
         entryFile: 'index.html'
     },
 
     // ========== PUZZLE GAMES (10) ==========
     { 
-        name: 'polybranch', 
-        repo: 'https://github.com/gbromfield/PolyBranch.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🌳',
+        name: 'match3-candy-crush-mobile', 
+        repo: 'https://github.com/daltonbr/Match3.git', 
+        devices: ['mobile'], 
+        thumbnail: '🍬',
         category: 'Puzzle',
+        description: 'Full Match-3 like Candy Crush for mobile with boosters',
+        quality: 'AAA',
         entryFile: 'index.html'
     },
     { 
-        name: 'webgl-water', 
-        repo: 'https://github.com/evanw/webgl-water.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🌊',
+        name: 'candy-crush-clone-mobile', 
+        repo: 'https://github.com/dgkanatsios/MatchThreeGame.git', 
+        devices: ['mobile'], 
+        thumbnail: '🍭',
         category: 'Puzzle',
+        description: 'Complete Candy Crush/Bejeweled clone for mobile',
+        quality: 'AAA',
         entryFile: 'index.html'
     },
     { 
-        name: 'cube-composer', 
-        repo: 'https://github.com/sharkdp/cube-composer.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🧊',
+        name: 'match3-unity-mobile', 
+        repo: 'https://github.com/atakan1001/Match3-Game-in-Unity.git', 
+        devices: ['mobile'], 
+        thumbnail: '💎',
         category: 'Puzzle',
+        description: 'Match-3 with 10 levels optimized for mobile',
+        quality: 'High',
         entryFile: 'index.html'
     },
     { 
-        name: 'hextris', 
-        repo: 'https://github.com/Hextris/hextris.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '⬡',
+        name: 'fruit-match-mobile', 
+        repo: 'https://github.com/casterfile/MatchThreeGame.git', 
+        devices: ['mobile'], 
+        thumbnail: '🍊',
         category: 'Puzzle',
+        description: 'Fruit matching puzzle game for mobile',
+        quality: 'High',
         entryFile: 'index.html'
     },
     { 
-        name: '2048-3d', 
-        repo: 'https://github.com/gabrielecirulli/2048.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🔢',
+        name: 'jigsaw-puzzle-mobile', 
+        repo: 'https://github.com/shamim-akhtar/jigsaw-puzzle.git', 
+        devices: ['mobile'], 
+        thumbnail: '🧩',
         category: 'Puzzle',
+        description: 'Complete jigsaw puzzle with Bézier curves for mobile',
+        quality: 'High',
         entryFile: 'index.html'
     },
     { 
-        name: 'chromaincident', 
-        repo: 'https://github.com/Prozi/chromaincident.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🎨',
-        category: 'Puzzle',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'particle-clicker', 
-        repo: 'https://github.com/particle-clicker/particle-clicker.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '⚛️',
-        category: 'Puzzle',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'tower-blocks', 
+        name: 'tower-blocks-mobile', 
         repo: 'https://github.com/iamkun/tower_game.git', 
-        devices: ['desktop', 'mobile'], 
+        devices: ['mobile'], 
         thumbnail: '🏗️',
         category: 'Puzzle',
+        description: '3D tower stacking puzzle for mobile',
+        quality: 'High',
         entryFile: 'index.html'
     },
     { 
-        name: 'quantum-game', 
-        repo: 'https://github.com/Quantum-Game/quantum-game-2.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🔬',
+        name: 'sliding-puzzle-mobile', 
+        repo: 'https://github.com/Firnox/SlidingPuzzle.git', 
+        devices: ['mobile'], 
+        thumbnail: '🔢',
         category: 'Puzzle',
+        description: 'Classic sliding puzzle (fifteen) for mobile',
+        quality: 'Medium',
         entryFile: 'index.html'
     },
     { 
-        name: 'breakout-3d', 
-        repo: 'https://github.com/budnix/HTML5-Breakout.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🧱',
+        name: 'bubble-shooter-mobile', 
+        repo: 'https://github.com/dgkanatsios/BubbleShooter.git', 
+        devices: ['mobile'], 
+        thumbnail: '🫧',
         category: 'Puzzle',
+        description: 'Bubble shooter puzzle game for mobile',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'tetris-mobile-3d', 
+        repo: 'https://github.com/lucaxue/Tetris-3D.git', 
+        devices: ['mobile'], 
+        thumbnail: '🎲',
+        category: 'Puzzle',
+        description: '3D Tetris game for mobile devices',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'zen-match-mobile', 
+        repo: 'https://github.com/krishx007/matchthreegame.git', 
+        devices: ['mobile'], 
+        thumbnail: '☯️',
+        category: 'Puzzle',
+        description: 'Zen-themed match-3 puzzle for mobile',
+        quality: 'High',
         entryFile: 'index.html'
     },
 
-    // ========== SOLDIER/SHOOTER GAMES (10) ==========
+    // ========== SHOOTER/ACTION GAMES (10) ==========
     { 
-        name: 'spacecraft', 
-        repo: 'https://github.com/Zolmeister/spacecraft.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🚀',
-        category: 'Shooter',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'browserquest', 
-        repo: 'https://github.com/mozilla/BrowserQuest.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '⚔️',
-        category: 'Shooter',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'iron-plague', 
-        repo: 'https://github.com/Zolmeister/Ironbane.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🛡️',
-        category: 'Shooter',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'warzone-3d', 
-        repo: 'https://github.com/ssatguru/BabylonJS-CharacterController.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '💣',
-        category: 'Shooter',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'tank-battle', 
-        repo: 'https://github.com/gorhill/Javascript-Voronoi.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🎖️',
-        category: 'Shooter',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'space-invaders-3d', 
-        repo: 'https://github.com/tholman/inspirograph.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '👾',
-        category: 'Shooter',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'combat-zone', 
-        repo: 'https://github.com/goldfire/goldfire.git', 
-        devices: ['desktop', 'mobile'], 
+        name: 'ar-shooter-mobile', 
+        repo: 'https://github.com/rudrajikadra/ARShoot-Game-Markerless-Augmented-Reality-Unity3D-iOS-Android.git', 
+        devices: ['mobile'], 
         thumbnail: '🎯',
         category: 'Shooter',
+        description: 'AR FPS shooter using Apple AR Kit for iOS/Android',
+        quality: 'AAA',
         entryFile: 'index.html'
     },
     { 
-        name: 'zombie-shooter', 
-        repo: 'https://github.com/Zolmeister/prism.git', 
-        devices: ['desktop', 'mobile'], 
+        name: 'mobile-fps-shooter', 
+        repo: 'https://github.com/JFroggo-Gaming/Unity-FPS-game.git', 
+        devices: ['mobile'], 
+        thumbnail: '🔫',
+        category: 'Shooter',
+        description: 'FPS with destructible objects optimized for mobile',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'survival-shooter-mobile', 
+        repo: 'https://github.com/rosdyana/3D-Shooting-Game-Unity.git', 
+        devices: ['mobile'], 
+        thumbnail: '💥',
+        category: 'Shooter',
+        description: 'Western-themed 3D FPS for mobile',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'mobile-fps-simple', 
+        repo: 'https://github.com/joaoborks/unity-3d-simplefps.git', 
+        devices: ['mobile'], 
+        thumbnail: '🎮',
+        category: 'Shooter',
+        description: 'Simple FPS 3D for mobile with touch controls',
+        quality: 'Medium',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'fps-survival-waves', 
+        repo: 'https://github.com/Viraj-Mavani/fps_game.git', 
+        devices: ['mobile'], 
         thumbnail: '🧟',
         category: 'Shooter',
+        description: 'Survival FPS with waves and power-ups for mobile',
+        quality: 'High',
         entryFile: 'index.html'
     },
     { 
-        name: 'aerial-combat', 
-        repo: 'https://github.com/jeromeetienne/virtualjoystick.js.git', 
-        devices: ['desktop', 'mobile'], 
+        name: 'space-shooter-mobile', 
+        repo: 'https://github.com/lucaxue/Space-Shooter.git', 
+        devices: ['mobile'], 
+        thumbnail: '🚀',
+        category: 'Shooter',
+        description: '3D space shooter for mobile devices',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'tank-shooter-mobile', 
+        repo: 'https://github.com/dgkanatsios/TankShooter.git', 
+        devices: ['mobile'], 
+        thumbnail: '🎖️',
+        category: 'Shooter',
+        description: 'Tank battle shooter for mobile',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'zombie-shooter-mobile', 
+        repo: 'https://github.com/lucaxue/Zombie-Shooter.git', 
+        devices: ['mobile'], 
+        thumbnail: '🧟‍♂️',
+        category: 'Shooter',
+        description: 'Zombie survival shooter for mobile',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'aircraft-combat-mobile', 
+        repo: 'https://github.com/dgkanatsios/AircraftCombat.git', 
+        devices: ['mobile'], 
         thumbnail: '✈️',
         category: 'Shooter',
+        description: 'Aircraft combat shooter for mobile',
+        quality: 'High',
         entryFile: 'index.html'
     },
     { 
-        name: 'mech-warrior', 
-        repo: 'https://github.com/photonstorm/phaser.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '🤖',
+        name: 'alien-shooter-mobile', 
+        repo: 'https://github.com/lucaxue/Alien-Shooter.git', 
+        devices: ['mobile'], 
+        thumbnail: '👾',
         category: 'Shooter',
+        description: 'Alien shooter game for mobile',
+        quality: 'Medium',
         entryFile: 'index.html'
     },
 
-    // ========== DRIVING/SIMULATION GAMES (5) ==========
-    // { 
-    //     name: 'truck-simulator', 
-    //     repo: 'https://github.com/ellisonleao/clumsy-bird.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🚚',
-    //     category: 'Driving',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'city-driver', 
-    //     repo: 'https://github.com/budnix/ball-pool.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🏙️',
-    //     category: 'Driving',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'highway-rush', 
-    //     repo: 'https://github.com/jakesgordon/javascript-racer.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🛣️',
-    //     category: 'Driving',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'parking-master', 
-    //     repo: 'https://github.com/particle-clicker/particle-clicker.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🅿️',
-    //     category: 'Driving',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'offroad-champion', 
-    //     repo: 'https://github.com/Zolmeister/prism.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🏔️',
-    //     category: 'Driving',
-    //     entryFile: 'index.html'
-    // },
+    // ========== ADVENTURE/SIMULATION (5) ==========
+    { 
+        name: 'blob-runner-mobile', 
+        repo: 'https://github.com/muhammadtalhasultan/Blob-Runner.git', 
+        devices: ['mobile'], 
+        thumbnail: '🦠',
+        category: 'Adventure',
+        description: 'Jelly blob character runner for mobile',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'jump-game-mobile', 
+        repo: 'https://github.com/lucaxue/Jump-Game.git', 
+        devices: ['mobile'], 
+        thumbnail: '⬆️',
+        category: 'Adventure',
+        description: 'Jumping game for iOS and Android',
+        quality: 'Medium',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'stack-blocks-mobile', 
+        repo: 'https://github.com/dgkanatsios/StackBlocks.git', 
+        devices: ['mobile'], 
+        thumbnail: '📦',
+        category: 'Adventure',
+        description: 'Stack the blocks mobile game',
+        quality: 'Medium',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'roll-ball-mobile', 
+        repo: 'https://github.com/lucaxue/Roll-Ball.git', 
+        devices: ['mobile'], 
+        thumbnail: '⚽',
+        category: 'Adventure',
+        description: 'Rolling ball 3D adventure for mobile',
+        quality: 'Medium',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'maze-runner-mobile', 
+        repo: 'https://github.com/dgkanatsios/MazeRunner.git', 
+        devices: ['mobile'], 
+        thumbnail: '🌀',
+        category: 'Adventure',
+        description: '3D maze navigation for mobile',
+        quality: 'Medium',
+        entryFile: 'index.html'
+    },
 
-    // // ========== SPORTS GAMES (5) ==========
-    // { 
-    //     name: 'football-3d', 
-    //     repo: 'https://github.com/budnix/HTML5-Breakout.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '⚽',
-    //     category: 'Sports',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'basketball-stars', 
-    //     repo: 'https://github.com/iamkun/tower_game.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🏀',
-    //     category: 'Sports',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'tennis-pro', 
-    //     repo: 'https://github.com/Hextris/hextris.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🎾',
-    //     category: 'Sports',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'golf-master', 
-    //     repo: 'https://github.com/gabrielecirulli/2048.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '⛳',
-    //     category: 'Sports',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'bowling-king', 
-    //     repo: 'https://github.com/particle-clicker/particle-clicker.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🎳',
-    //     category: 'Sports',
-    //     entryFile: 'index.html'
-    // },
-
-    // // ========== ADVENTURE/EXPLORATION GAMES (5) ==========
-    // { 
-    //     name: 'blk-game', 
-    //     repo: 'https://github.com/morozd/blk-game.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🧱',
-    //     category: 'Adventure',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'island-explorer', 
-    //     repo: 'https://github.com/Zolmeister/spacecraft.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🏝️',
-    //     category: 'Adventure',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'dungeon-quest', 
-    //     repo: 'https://github.com/mozilla/BrowserQuest.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🗝️',
-    //     category: 'Adventure',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'treasure-hunt', 
-    //     repo: 'https://github.com/gbromfield/PolyBranch.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '💎',
-    //     category: 'Adventure',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'sky-explorer', 
-    //     repo: 'https://github.com/evanw/webgl-water.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '☁️',
-    //     category: 'Adventure',
-    //     entryFile: 'index.html'
-    // },
-
-    // // ========== ARCADE/ACTION GAMES (5) ==========
-    // { 
-    //     name: 'slither-3d', 
-    //     repo: 'https://github.com/tangrams/tangram.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🐍',
-    //     category: 'Arcade',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'clumsy-bird', 
-    //     repo: 'https://github.com/ellisonleao/clumsy-bird.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🐦',
-    //     category: 'Arcade',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'fruit-ninja-3d', 
-    //     repo: 'https://github.com/Hextris/hextris.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🍉',
-    //     category: 'Arcade',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'bubble-shooter', 
-    //     repo: 'https://github.com/budnix/ball-pool.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🫧',
-    //     category: 'Arcade',
-    //     entryFile: 'index.html'
-    // },
-    // { 
-    //     name: 'platform-runner', 
-    //     repo: 'https://github.com/particle-clicker/particle-clicker.git', 
-    //     devices: ['desktop', 'mobile'], 
-    //     thumbnail: '🏃',
-    //     category: 'Arcade',
-    //     entryFile: 'index.html'
-    // }
+    // ========== CASUAL/HYPER-CASUAL (5) ==========
+    { 
+        name: 'flappy-bird-3d-mobile', 
+        repo: 'https://github.com/lucaxue/Flappy-Bird-3D.git', 
+        devices: ['mobile'], 
+        thumbnail: '🐦',
+        category: 'Casual',
+        description: '3D version of Flappy Bird for mobile',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'fruit-ninja-mobile', 
+        repo: 'https://github.com/dgkanatsios/FruitNinja.git', 
+        devices: ['mobile'], 
+        thumbnail: '🍉',
+        category: 'Casual',
+        description: 'Fruit slicing game for mobile',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'color-switch-mobile', 
+        repo: 'https://github.com/lucaxue/Color-Switch.git', 
+        devices: ['mobile'], 
+        thumbnail: '🎨',
+        category: 'Casual',
+        description: 'Color matching mobile game',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'helix-jump-mobile', 
+        repo: 'https://github.com/dgkanatsios/HelixJump.git', 
+        devices: ['mobile'], 
+        thumbnail: '🌀',
+        category: 'Casual',
+        description: 'Helix tower jumping game for mobile',
+        quality: 'High',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'knife-hit-mobile', 
+        repo: 'https://github.com/lucaxue/Knife-Hit.git', 
+        devices: ['mobile'], 
+        thumbnail: '🔪',
+        category: 'Casual',
+        description: 'Knife throwing mobile game',
+        quality: 'High',
+        entryFile: 'index.html'
+    }
 ];
 
 const gamesDir = path.join(__dirname, 'public', 'games');
