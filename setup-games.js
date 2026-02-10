@@ -7,14 +7,14 @@ const games = [
     {
         name: 'threejs-cannon',
         repo: 'https://github.com/VeinSyct/ThreeJsCannon.git',
-        devices: ['mobile'],
+        devices: ['mobile', 'desktop'],
         thumbnail: '🧱',
-        entryFile: 'public/index.html'
+        entryFile: 'public/index.html'  // Nested in public folder
     },
     { 
         name: 'hexgl', 
         repo: 'https://github.com/BKcore/HexGL.git', 
-        devices: ['desktop, mobile'], 
+        devices: ['desktop', 'mobile'], 
         thumbnail: '🚀',
         entryFile: 'index.html'
     },
@@ -22,7 +22,7 @@ const games = [
         name: 'crazy-racing', 
         repo: 'https://github.com/yuehaowang/crazy_racing.git', 
         devices: ['desktop', 'mobile'], 
-        thumbnail: '🏁',
+        thumbnail: '🏎',
         entryFile: 'index.html'
     },
     { 
@@ -42,14 +42,14 @@ const games = [
     { 
         name: 'neon-racer', 
         repo: 'https://github.com/CodeArtemis/TriggerRally.git', 
-        devices: ['desktop, mobile'], 
+        devices: ['desktop', 'mobile'], 
         thumbnail: '💨',
         entryFile: 'index.html'
     },
     { 
         name: 'speed-dash', 
         repo: 'https://github.com/FreezingMoon/AncientBeast.git', 
-        devices: ['desktop, mobile'], 
+        devices: ['desktop', 'mobile'], 
         thumbnail: '⚡',
         entryFile: 'index.html'
     },
@@ -130,6 +130,12 @@ async function downloadGame(game, index, total) {
 
 function generateGameWrapper(game) {
     const wrapperPath = path.join(wrappersDir, `${game.name}.html`);
+    
+    // Calculate base path for nested entry files
+    // e.g., "public/index.html" -> base = "public/"
+    // e.g., "index.html" -> base = ""
+    const entryFileParts = game.entryFile.split('/');
+    const baseFolder = entryFileParts.length > 1 ? entryFileParts.slice(0, -1).join('/') + '/' : '';
     
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -324,11 +330,39 @@ function generateGameWrapper(game) {
     </div>
 
     <script>
-        // Hide loading overlay after game loads
+        // CRITICAL: Set base tag in iframe to handle nested folder structures
         const gameFrame = document.getElementById('gameFrame');
         const loadingOverlay = document.getElementById('loadingOverlay');
         
         gameFrame.addEventListener('load', function() {
+            try {
+                const iframeDoc = gameFrame.contentDocument || gameFrame.contentWindow.document;
+                
+                // Check if base tag already exists
+                let baseTag = iframeDoc.querySelector('base');
+                
+                // Only add base tag if entry file is in a nested folder
+                const baseFolder = '${baseFolder}';
+                if (baseFolder && !baseTag) {
+                    baseTag = iframeDoc.createElement('base');
+                    // Set base to the folder containing the entry file
+                    baseTag.href = '/games/${game.name}/${baseFolder}';
+                    
+                    // Insert at the beginning of head
+                    const head = iframeDoc.head || iframeDoc.getElementsByTagName('head')[0];
+                    if (head && head.firstChild) {
+                        head.insertBefore(baseTag, head.firstChild);
+                    } else if (head) {
+                        head.appendChild(baseTag);
+                    }
+                    
+                    console.log('✅ Base tag injected:', baseTag.href);
+                }
+            } catch (e) {
+                // Cross-origin or sandbox restrictions - that's okay
+                console.log('ℹ️  Could not access iframe document (may be sandboxed)');
+            }
+            
             setTimeout(() => {
                 loadingOverlay.classList.add('hidden');
             }, 500);
@@ -382,7 +416,7 @@ function generateGameWrapper(game) {
 </html>`;
 
     fs.writeFileSync(wrapperPath, html, 'utf-8');
-    console.log(`   📄 Generated wrapper: ${game.name}.html`);
+    console.log(`   📄 Generated wrapper: ${game.name}.html (base: ${baseFolder || 'root'})`);
 }
 
 function capitalizeGameName(name) {
@@ -392,7 +426,7 @@ function capitalizeGameName(name) {
 }
 
 async function setupAllGames() {
-    console.log('🏎️  Downloading 15 Premium Racing Games from GitHub...\n');
+    console.log('🎮 Downloading Games from GitHub...\n');
     
     const results = [];
     for (let i = 0; i < games.length; i++) {
@@ -400,7 +434,7 @@ async function setupAllGames() {
         results.push(result);
     }
     
-    console.log('\n📝 Generating game wrapper HTML files...\n');
+    console.log('\n📝 Generating base-aware game wrapper HTML files...\n');
     
     const successfulGames = results.filter(r => r.success).map(r => r.game);
     successfulGames.forEach(game => {

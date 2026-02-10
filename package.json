@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "setup": "node setup-games.js && node fix-paths.js",
+    "setup": "node setup-games.js",
     "dev": "nodemon server.js",
     "build": "npm run setup"
   },
