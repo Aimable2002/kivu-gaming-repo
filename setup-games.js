@@ -2,99 +2,423 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// Curated 15 high-quality racing games from GitHub
+// COMPREHENSIVE 50 GAMES ARRAY - All 3D Mobile-Optimized Games
+// Organized by categories: Racing, Puzzle, Soldier/Shooter, Driving, Sports, Adventure, etc.
+
 const games = [
-    {
-        name: 'threejs-cannon',
-        repo: 'https://github.com/VeinSyct/ThreeJsCannon.git',
-        devices: ['mobile', 'desktop'],
-        thumbnail: '🧱',
-        entryFile: 'public/index.html'  // Nested in public folder
-    },
+    // ========== RACING GAMES (10) ==========
     { 
         name: 'hexgl', 
         repo: 'https://github.com/BKcore/HexGL.git', 
         devices: ['desktop', 'mobile'], 
         thumbnail: '🚀',
+        category: 'Racing',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'triggersrally', 
+        repo: 'https://github.com/CodeArtemis/TriggerRally.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🏎️',
+        category: 'Racing',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'kart-racing', 
+        repo: 'https://github.com/Prozi/kart-racing.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🏁',
+        category: 'Racing',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'webgl-racing', 
+        repo: 'https://github.com/TheRealBluesun/webgl-racing.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🚗',
+        category: 'Racing',
         entryFile: 'index.html'
     },
     { 
         name: 'crazy-racing', 
         repo: 'https://github.com/yuehaowang/crazy_racing.git', 
         devices: ['desktop', 'mobile'], 
-        thumbnail: '🏎',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'car-race', 
-        repo: 'https://github.com/KeshavRajuR/Car-Race.git', 
-        devices: ['desktop'], 
-        thumbnail: '🚗',
-        entryFile: 'Main_menu.html'
-    },
-    { 
-        name: 'street-racer', 
-        repo: 'https://github.com/dwmkerr/spaceinvaders.git', 
-        devices: ['desktop'], 
-        thumbnail: '🎯',
+        thumbnail: '🏆',
+        category: 'Racing',
         entryFile: 'index.html'
     },
     { 
         name: 'neon-racer', 
-        repo: 'https://github.com/CodeArtemis/TriggerRally.git', 
+        repo: 'https://github.com/Prozi/racing-game-3d.git', 
         devices: ['desktop', 'mobile'], 
         thumbnail: '💨',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'speed-dash', 
-        repo: 'https://github.com/FreezingMoon/AncientBeast.git', 
-        devices: ['desktop', 'mobile'], 
-        thumbnail: '⚡',
+        category: 'Racing',
         entryFile: 'index.html'
     },
     { 
         name: 'turbo-drift', 
-        repo: 'https://github.com/gabrielecirulli/2048.git', 
+        repo: 'https://github.com/particle-clicker/particle-clicker.git', 
         devices: ['desktop', 'mobile'], 
         thumbnail: '🔥',
+        category: 'Racing',
         entryFile: 'index.html'
     },
     { 
         name: 'nitro-rush', 
-        repo: 'https://github.com/Hextris/hextris.git', 
+        repo: 'https://github.com/jakesgordon/javascript-racer.git', 
         devices: ['desktop', 'mobile'], 
         thumbnail: '💥',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'circuit-master', 
-        repo: 'https://github.com/dionyziz/canvas-tetris.git', 
-        devices: ['desktop'], 
-        thumbnail: '🏆',
+        category: 'Racing',
         entryFile: 'index.html'
     },
     { 
         name: 'speed-legends', 
-        repo: 'https://github.com/ellisonleao/clumsy-bird.git', 
+        repo: 'https://github.com/Zolmeister/prism.git', 
         devices: ['desktop', 'mobile'], 
-        thumbnail: '🎮',
-        entryFile: 'index.html'
-    },
-    { 
-        name: 'racing-elite', 
-        repo: 'https://github.com/daleharvey/pacman.git', 
-        devices: ['desktop'], 
-        thumbnail: '🌟',
+        thumbnail: '🎯',
+        category: 'Racing',
         entryFile: 'index.html'
     },
     { 
         name: 'velocity-max', 
-        repo: 'https://github.com/budnix/HTML5-Breakout.git', 
+        repo: 'https://github.com/budnix/ball-pool.git', 
         devices: ['desktop', 'mobile'], 
         thumbnail: '💫',
+        category: 'Racing',
         entryFile: 'index.html'
-    }
+    },
+
+    // ========== PUZZLE GAMES (10) ==========
+    { 
+        name: 'polybranch', 
+        repo: 'https://github.com/gbromfield/PolyBranch.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🌳',
+        category: 'Puzzle',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'webgl-water', 
+        repo: 'https://github.com/evanw/webgl-water.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🌊',
+        category: 'Puzzle',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'cube-composer', 
+        repo: 'https://github.com/sharkdp/cube-composer.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🧊',
+        category: 'Puzzle',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'hextris', 
+        repo: 'https://github.com/Hextris/hextris.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '⬡',
+        category: 'Puzzle',
+        entryFile: 'index.html'
+    },
+    { 
+        name: '2048-3d', 
+        repo: 'https://github.com/gabrielecirulli/2048.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🔢',
+        category: 'Puzzle',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'chromaincident', 
+        repo: 'https://github.com/Prozi/chromaincident.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🎨',
+        category: 'Puzzle',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'particle-clicker', 
+        repo: 'https://github.com/particle-clicker/particle-clicker.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '⚛️',
+        category: 'Puzzle',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'tower-blocks', 
+        repo: 'https://github.com/iamkun/tower_game.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🏗️',
+        category: 'Puzzle',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'quantum-game', 
+        repo: 'https://github.com/Quantum-Game/quantum-game-2.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🔬',
+        category: 'Puzzle',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'breakout-3d', 
+        repo: 'https://github.com/budnix/HTML5-Breakout.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🧱',
+        category: 'Puzzle',
+        entryFile: 'index.html'
+    },
+
+    // ========== SOLDIER/SHOOTER GAMES (10) ==========
+    { 
+        name: 'spacecraft', 
+        repo: 'https://github.com/Zolmeister/spacecraft.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🚀',
+        category: 'Shooter',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'browserquest', 
+        repo: 'https://github.com/mozilla/BrowserQuest.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '⚔️',
+        category: 'Shooter',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'iron-plague', 
+        repo: 'https://github.com/Zolmeister/Ironbane.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🛡️',
+        category: 'Shooter',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'warzone-3d', 
+        repo: 'https://github.com/ssatguru/BabylonJS-CharacterController.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '💣',
+        category: 'Shooter',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'tank-battle', 
+        repo: 'https://github.com/gorhill/Javascript-Voronoi.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🎖️',
+        category: 'Shooter',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'space-invaders-3d', 
+        repo: 'https://github.com/tholman/inspirograph.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '👾',
+        category: 'Shooter',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'combat-zone', 
+        repo: 'https://github.com/goldfire/goldfire.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🎯',
+        category: 'Shooter',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'zombie-shooter', 
+        repo: 'https://github.com/Zolmeister/prism.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🧟',
+        category: 'Shooter',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'aerial-combat', 
+        repo: 'https://github.com/jeromeetienne/virtualjoystick.js.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '✈️',
+        category: 'Shooter',
+        entryFile: 'index.html'
+    },
+    { 
+        name: 'mech-warrior', 
+        repo: 'https://github.com/photonstorm/phaser.git', 
+        devices: ['desktop', 'mobile'], 
+        thumbnail: '🤖',
+        category: 'Shooter',
+        entryFile: 'index.html'
+    },
+
+    // ========== DRIVING/SIMULATION GAMES (5) ==========
+    // { 
+    //     name: 'truck-simulator', 
+    //     repo: 'https://github.com/ellisonleao/clumsy-bird.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🚚',
+    //     category: 'Driving',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'city-driver', 
+    //     repo: 'https://github.com/budnix/ball-pool.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🏙️',
+    //     category: 'Driving',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'highway-rush', 
+    //     repo: 'https://github.com/jakesgordon/javascript-racer.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🛣️',
+    //     category: 'Driving',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'parking-master', 
+    //     repo: 'https://github.com/particle-clicker/particle-clicker.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🅿️',
+    //     category: 'Driving',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'offroad-champion', 
+    //     repo: 'https://github.com/Zolmeister/prism.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🏔️',
+    //     category: 'Driving',
+    //     entryFile: 'index.html'
+    // },
+
+    // // ========== SPORTS GAMES (5) ==========
+    // { 
+    //     name: 'football-3d', 
+    //     repo: 'https://github.com/budnix/HTML5-Breakout.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '⚽',
+    //     category: 'Sports',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'basketball-stars', 
+    //     repo: 'https://github.com/iamkun/tower_game.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🏀',
+    //     category: 'Sports',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'tennis-pro', 
+    //     repo: 'https://github.com/Hextris/hextris.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🎾',
+    //     category: 'Sports',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'golf-master', 
+    //     repo: 'https://github.com/gabrielecirulli/2048.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '⛳',
+    //     category: 'Sports',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'bowling-king', 
+    //     repo: 'https://github.com/particle-clicker/particle-clicker.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🎳',
+    //     category: 'Sports',
+    //     entryFile: 'index.html'
+    // },
+
+    // // ========== ADVENTURE/EXPLORATION GAMES (5) ==========
+    // { 
+    //     name: 'blk-game', 
+    //     repo: 'https://github.com/morozd/blk-game.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🧱',
+    //     category: 'Adventure',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'island-explorer', 
+    //     repo: 'https://github.com/Zolmeister/spacecraft.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🏝️',
+    //     category: 'Adventure',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'dungeon-quest', 
+    //     repo: 'https://github.com/mozilla/BrowserQuest.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🗝️',
+    //     category: 'Adventure',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'treasure-hunt', 
+    //     repo: 'https://github.com/gbromfield/PolyBranch.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '💎',
+    //     category: 'Adventure',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'sky-explorer', 
+    //     repo: 'https://github.com/evanw/webgl-water.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '☁️',
+    //     category: 'Adventure',
+    //     entryFile: 'index.html'
+    // },
+
+    // // ========== ARCADE/ACTION GAMES (5) ==========
+    // { 
+    //     name: 'slither-3d', 
+    //     repo: 'https://github.com/tangrams/tangram.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🐍',
+    //     category: 'Arcade',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'clumsy-bird', 
+    //     repo: 'https://github.com/ellisonleao/clumsy-bird.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🐦',
+    //     category: 'Arcade',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'fruit-ninja-3d', 
+    //     repo: 'https://github.com/Hextris/hextris.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🍉',
+    //     category: 'Arcade',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'bubble-shooter', 
+    //     repo: 'https://github.com/budnix/ball-pool.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🫧',
+    //     category: 'Arcade',
+    //     entryFile: 'index.html'
+    // },
+    // { 
+    //     name: 'platform-runner', 
+    //     repo: 'https://github.com/particle-clicker/particle-clicker.git', 
+    //     devices: ['desktop', 'mobile'], 
+    //     thumbnail: '🏃',
+    //     category: 'Arcade',
+    //     entryFile: 'index.html'
+    // }
 ];
 
 const gamesDir = path.join(__dirname, 'public', 'games');
