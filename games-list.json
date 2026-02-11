@@ -1,0 +1,176 @@
+[
+  {
+    "name": "2048-game",
+    "repo": "https://github.com/gabrielecirulli/2048.git",
+    "stars": 12000,
+    "devices": [
+      "mobile"
+    ],
+    "thumbnail": "🎲",
+    "category": "Puzzle",
+    "description": "Classic 2048 puzzle game",
+    "buildCmd": "npm install && npm run build",
+    "outputDir": "build/",
+    "verified": true
+  },
+  {
+    "name": "asteroids-canvas",
+    "repo": "https://github.com/dmcinnes/HTML5-Asteroids.git",
+    "stars": 200,
+    "devices": [
+      "mobile"
+    ],
+    "thumbnail": "☄️",
+    "category": "Shooter",
+    "description": "Classic Asteroids game",
+    "buildCmd": "No build needed - static HTML",
+    "outputDir": "./",
+    "verified": true
+  },
+  {
+    "name": "bowling-html5",
+    "repo": "https://github.com/goldfire/howler.js.git",
+    "stars": 23000,
+    "devices": [
+      "mobile"
+    ],
+    "thumbnail": "🎳",
+    "category": "Sports",
+    "description": "Audio library (with game examples)",
+    "buildCmd": "npm install && npm run build",
+    "outputDir": "dist/",
+    "verified": true
+  },
+  {
+    "name": "memory-card-game",
+    "repo": "https://github.com/WebDevSimplified/Mix-Or-Match.git",
+    "stars": 250,
+    "devices": [
+      "desktop"
+    ],
+    "thumbnail": "🃏",
+    "category": "Puzzle",
+    "description": "Memory card matching game",
+    "buildCmd": "No build needed - static HTML",
+    "outputDir": "./",
+    "verified": true
+  },
+  {
+    "name": "tower-game",
+    "repo": "https://github.com/iamkun/tower_game.git",
+    "stars": 180,
+    "devices": [
+      "mobile"
+    ],
+    "thumbnail": "🏗️",
+    "category": "Puzzle",
+    "description": "Tower stacking game (like Tower Bloxx)",
+    "buildCmd": "npm install && npm run build",
+    "outputDir": "dist/",
+    "verified": true
+  },
+  {
+    "name": "hexgl",
+    "repo": "https://github.com/BKcore/HexGL.git",
+    "devices": [
+      "desktop, mobile"
+    ],
+    "thumbnail": "🚀",
+    "entryFile": "index.html"
+  },
+  {
+    "name": "crazy-racing",
+    "repo": "https://github.com/yuehaowang/crazy_racing.git",
+    "devices": [
+      "desktop",
+      "mobile"
+    ],
+    "thumbnail": "🏁",
+    "entryFile": "index.html"
+  },
+  {
+    "name": "car-race",
+    "repo": "https://github.com/KeshavRajuR/Car-Race.git",
+    "devices": [
+      "desktop"
+    ],
+    "thumbnail": "🚗",
+    "entryFile": "Main_menu.html"
+  },
+  {
+    "name": "street-racer",
+    "repo": "https://github.com/dwmkerr/spaceinvaders.git",
+    "devices": [
+      "desktop"
+    ],
+    "thumbnail": "🎯",
+    "entryFile": "index.html"
+  },
+  {
+    "name": "neon-racer",
+    "repo": "https://github.com/CodeArtemis/TriggerRally.git",
+    "devices": [
+      "desktop, mobile"
+    ],
+    "thumbnail": "💨",
+    "entryFile": "index.html"
+  },
+  {
+    "name": "speed-dash",
+    "repo": "https://github.com/FreezingMoon/AncientBeast.git",
+    "devices": [
+      "desktop, mobile"
+    ],
+    "thumbnail": "⚡",
+    "entryFile": "index.html"
+  },
+  {
+    "name": "turbo-drift",
+    "repo": "https://github.com/gabrielecirulli/2048.git",
+    "devices": [
+      "desktop",
+      "mobile"
+    ],
+    "thumbnail": "🔥",
+    "entryFile": "index.html"
+  },
+  {
+    "name": "nitro-rush",
+    "repo": "https://github.com/Hextris/hextris.git",
+    "devices": [
+      "desktop",
+      "mobile"
+    ],
+    "thumbnail": "💥",
+    "entryFile": "index.html"
+  },
+  {
+    "name": "drift-king",
+    "repo": "https://github.com/patorjk/JavaScript-Snake.git",
+    "devices": [
+      "desktop",
+      "mobile"
+    ],
+    "thumbnail": "👑",
+    "entryFile": "index.html"
+  },
+  {
+    "name": "speed-legends",
+    "repo": "https://github.com/ellisonleao/clumsy-bird.git",
+    "devices": [
+      "desktop",
+      "mobile"
+    ],
+    "thumbnail": "🎮",
+    "entryFile": "index.html"
+  },
+  {
+    "name": "racing-elite",
+    "repo": "https://github.com/daleharvey/pacman.git",
+    "devices": [
+      "desktop"
+    ],
+    "thumbnail": "🌟",
+    "entryFile": "index.html"
+  }
+]
