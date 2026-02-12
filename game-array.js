@@ -12,18 +12,6 @@ const games = [
         verified: true
     },
     {
-        name: 'bowling-html5',
-        repo: 'https://github.com/goldfire/howler.js.git',
-        stars: 23000,
-        devices: ['mobile'],
-        thumbnail: '🎳',
-        category: 'Sports',
-        description: 'Audio library (with game examples)',
-        buildCmd: 'npm install && npm run build',
-        outputDir: 'dist/',
-        verified: true
-    },
-    {
         name: 'memory-card-game',
         repo: 'https://github.com/WebDevSimplified/Mix-Or-Match.git',
         stars: 250,
@@ -69,13 +57,6 @@ const games = [
         devices: ['desktop'], 
         thumbnail: '🚗',
         entryFile: 'Main_menu.html'
-    },
-    { 
-        name: 'street-racer', 
-        repo: 'https://github.com/dwmkerr/spaceinvaders.git', 
-        devices: ['desktop'], 
-        thumbnail: '🎯',
-        entryFile: 'index.html'
     },
     { 
         name: 'neon-racer', 

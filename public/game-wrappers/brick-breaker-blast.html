@@ -382,19 +382,22 @@
             playSound(150, 0.5, 'sawtooth');
         }
 
-        // Touch controls
+        // Touch controls — track absolute finger position (same as mouse, no jitter)
         canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            touchStartX = e.touches[0].clientX;
-        });
+            const rect = canvas.getBoundingClientRect();
+            const touchX = (e.touches[0].clientX - rect.left) * (canvas.width / rect.width);
+            paddle.x = touchX - paddle.width / 2;
+            paddle.dx = 0;
+        }, { passive: false });
 
         canvas.addEventListener('touchmove', (e) => {
             e.preventDefault();
-            const touchX = e.touches[0].clientX;
-            const deltaX = touchX - touchStartX;
-            paddle.dx = deltaX * 0.3;
-            touchStartX = touchX;
-        });
+            const rect = canvas.getBoundingClientRect();
+            const touchX = (e.touches[0].clientX - rect.left) * (canvas.width / rect.width);
+            paddle.x = touchX - paddle.width / 2;
+            paddle.dx = 0;
+        }, { passive: false });
 
         canvas.addEventListener('touchend', () => {
             paddle.dx = 0;

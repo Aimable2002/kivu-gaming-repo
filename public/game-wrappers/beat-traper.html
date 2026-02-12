@@ -227,40 +227,167 @@
         // Piano note frequencies (C4, E4, G4, C5)
         const pianoFrequencies = [261.63, 329.63, 392.00, 523.25];
 
-        function playPianoNote(lane, duration = 0.3, volume = 0.2) {
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            // Use sine wave for piano-like tone
-            oscillator.type = 'sine';
-            oscillator.frequency.value = pianoFrequencies[lane];
-            
-            // Envelope for piano-like attack and decay
-            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(volume, audioCtx.currentTime + 0.01);
-            gainNode.gain.exponentialRampToValueAtTime(volume * 0.3, audioCtx.currentTime + 0.1);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-            
-            oscillator.start(audioCtx.currentTime);
-            oscillator.stop(audioCtx.currentTime + duration);
+        // Master compressor for clean output
+        const masterCompressor = audioCtx.createDynamicsCompressor();
+        masterCompressor.threshold.value = -18;
+        masterCompressor.knee.value = 6;
+        masterCompressor.ratio.value = 3;
+        masterCompressor.attack.value = 0.003;
+        masterCompressor.release.value = 0.25;
+        masterCompressor.connect(audioCtx.destination);
+
+        // Rich piano sound using multiple harmonics (simulates string resonance)
+        function playPianoNote(lane, duration = 0.6, volume = 0.22) {
+            const freq = pianoFrequencies[lane];
+            const now = audioCtx.currentTime;
+
+            // Harmonic series: fundamental + octave + fifth + second octave
+            const harmonics = [
+                { ratio: 1,    gain: 1.0   },
+                { ratio: 2,    gain: 0.5   },
+                { ratio: 3,    gain: 0.25  },
+                { ratio: 4,    gain: 0.15  },
+                { ratio: 5,    gain: 0.08  },
+                { ratio: 6,    gain: 0.04  },
+            ];
+
+            const masterGain = audioCtx.createGain();
+            masterGain.connect(masterCompressor);
+
+            // Sharp piano attack then long natural decay
+            masterGain.gain.setValueAtTime(0, now);
+            masterGain.gain.linearRampToValueAtTime(volume, now + 0.005);
+            masterGain.gain.exponentialRampToValueAtTime(volume * 0.6, now + 0.04);
+            masterGain.gain.exponentialRampToValueAtTime(volume * 0.2, now + 0.3);
+            masterGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+            harmonics.forEach(h => {
+                const osc = audioCtx.createOscillator();
+                const hGain = audioCtx.createGain();
+                osc.connect(hGain);
+                hGain.connect(masterGain);
+                osc.type = 'sine';
+                osc.frequency.value = freq * h.ratio;
+                hGain.gain.value = h.gain;
+                osc.start(now);
+                osc.stop(now + duration);
+            });
+
+            // Soft bright attack transient (hammer strike)
+            const transientOsc = audioCtx.createOscillator();
+            const transientGain = audioCtx.createGain();
+            transientOsc.connect(transientGain);
+            transientGain.connect(masterCompressor);
+            transientOsc.type = 'triangle';
+            transientOsc.frequency.value = freq * 8;
+            transientGain.gain.setValueAtTime(volume * 0.3, now);
+            transientGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.025);
+            transientOsc.start(now);
+            transientOsc.stop(now + 0.03);
         }
 
         function playMissSound() {
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            oscillator.type = 'sawtooth';
-            oscillator.frequency.value = 100;
-            gainNode.gain.value = 0.05;
-            
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.1);
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(masterCompressor);
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.exponentialRampToValueAtTime(60, now + 0.15);
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+            osc.start(now);
+            osc.stop(now + 0.15);
+        }
+
+        // ---- BEAT / RHYTHM SYSTEM ----
+        let beatInterval = null;
+        let beatStep = 0;
+        const BPM = 128;
+        const stepTime = (60 / BPM) / 2; // 16th notes
+
+        // Beat pattern: kick, snare, hi-hat, open-hat
+        const kickPattern  = [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0];
+        const snarePattern = [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0];
+        const hatPattern   = [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0];
+        const openHat      = [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,1,0];
+
+        function playKick(time) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(masterCompressor);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(180, time);
+            osc.frequency.exponentialRampToValueAtTime(30, time + 0.25);
+            gain.gain.setValueAtTime(0.6, time);
+            gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.35);
+            osc.start(time); osc.stop(time + 0.35);
+        }
+
+        function playSnare(time) {
+            // White noise burst
+            const bufferSize = audioCtx.sampleRate * 0.15;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const noiseGain = audioCtx.createGain();
+            noise.connect(noiseGain); noiseGain.connect(masterCompressor);
+            noiseGain.gain.setValueAtTime(0.35, time);
+            noiseGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.15);
+            noise.start(time); noise.stop(time + 0.15);
+
+            // Snare tone
+            const osc = audioCtx.createOscillator();
+            const oscGain = audioCtx.createGain();
+            osc.connect(oscGain); oscGain.connect(masterCompressor);
+            osc.type = 'triangle';
+            osc.frequency.value = 200;
+            oscGain.gain.setValueAtTime(0.15, time);
+            oscGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.08);
+            osc.start(time); osc.stop(time + 0.08);
+        }
+
+        function playHiHat(time, open = false) {
+            const bufferSize = audioCtx.sampleRate * (open ? 0.3 : 0.05);
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'highpass';
+            filter.frequency.value = 7000;
+            const gain = audioCtx.createGain();
+            noise.connect(filter); filter.connect(gain); gain.connect(masterCompressor);
+            gain.gain.setValueAtTime(open ? 0.18 : 0.12, time);
+            gain.gain.exponentialRampToValueAtTime(0.0001, time + bufferSize / audioCtx.sampleRate);
+            noise.start(time); noise.stop(time + bufferSize / audioCtx.sampleRate);
+        }
+
+        function startBeat() {
+            stopBeat();
+            beatStep = 0;
+            let nextTime = audioCtx.currentTime + 0.05;
+
+            function scheduleStep() {
+                if (!gameActive) return;
+                const step = beatStep % 16;
+                if (kickPattern[step])  playKick(nextTime);
+                if (snarePattern[step]) playSnare(nextTime);
+                if (hatPattern[step])   playHiHat(nextTime, false);
+                if (openHat[step])      playHiHat(nextTime, true);
+                beatStep++;
+                nextTime += stepTime;
+                beatInterval = setTimeout(scheduleStep, (nextTime - audioCtx.currentTime - 0.02) * 1000);
+            }
+            scheduleStep();
+        }
+
+        function stopBeat() {
+            if (beatInterval) { clearTimeout(beatInterval); beatInterval = null; }
         }
 
         function generateSong() {
@@ -333,6 +460,9 @@
             document.getElementById('gameOver').style.display = 'none';
             document.getElementById('combo').style.display = 'none';
             
+            // Resume AudioContext on first interaction (browser policy)
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            startBeat();
             gameLoop();
         }
 
@@ -559,6 +689,7 @@
 
         function gameOver() {
             gameActive = false;
+            stopBeat();
             
             const accuracy = Math.round((hitNotes / totalNotes) * 100);
             let grade = 'F';

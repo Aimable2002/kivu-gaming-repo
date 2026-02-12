@@ -1,4 +1,33 @@
 [
+
+  { 
+    "id":"penalty-shootout", 
+    "name":"penalty-shootout", 
+    "description":"Tap to aim your shot and score past the goalkeeper", 
+    "category":"Sports", 
+    "difficulty":"Easy", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"⚽", "path":"/mobile-games/penalty-shootout.html" 
+  },
+  { 
+    "id":"tower-defense-td", 
+    "name":"tower-defense-td", 
+    "description":"Place towers, spend gold, survive 10 waves of enemies", 
+    "category":"Strategy", 
+    "difficulty":"Hard", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"🏰", "path":"/mobile-games/tower-defense-td.html" 
+  },
+  { 
+    "id":"word-blitz", 
+    "name":"word-blitz", 
+    "description":"Unscramble words fast! Build combos before the timer runs out", 
+    "category":"Word", 
+    "difficulty":"Medium", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"📝", 
+    "path":"/mobile-games/word-blitz.html" 
+  },
   {
     "id": "beat-traper",
     "name": "beat-traper",
@@ -6,20 +35,19 @@
     "category": "Puzzle",
     "difficulty": "Easy",
     "devices": ["mobile", "desktop"],
-    "thumbnail": "🌟",
+    "thumbnail": "🎵",
     "path": "/mobile-games/beat-traper.html"
-},
-{
+  },
+  {
     "id": "brick-breaker-blast",
     "name": "brick-breaker-blast",
-    "description": "Classic brick-breaker-blast game with neon graphics and modern controls",
+    "description": "Classic brick-breaker game with neon graphics and modern controls",
     "category": "Arcade",
     "difficulty": "Medium",
     "devices": ["mobile", "desktop"],
-    "thumbnail": "🐍",
+    "thumbnail": "🧱",
     "path": "/mobile-games/brick-breaker-blast.html"
-},
-
+  },
   {
     "id": "sky-jumper",
     "name": "sky-jumper",
@@ -27,19 +55,19 @@
     "category": "Puzzle",
     "difficulty": "Easy",
     "devices": ["mobile", "desktop"],
-    "thumbnail": "🌟",
+    "thumbnail": "☁️",
     "path": "/mobile-games/sky-jumper.html"
-},
-{
+  },
+  {
     "id": "maze-runner",
     "name": "maze-runner",
     "description": "Classic maze game with neon graphics and modern controls",
     "category": "Arcade",
     "difficulty": "Medium",
     "devices": ["mobile", "desktop"],
-    "thumbnail": "🐍",
+    "thumbnail": "🌀",
     "path": "/mobile-games/maze-runner.html"
-},
+  },  
 
   {
     "id": "bubble-pop-blast",
@@ -128,20 +156,6 @@
     "verified": true
   },
   {
-    "name": "bowling-html5",
-    "repo": "https://github.com/goldfire/howler.js.git",
-    "stars": 23000,
-    "devices": [
-      "mobile"
-    ],
-    "thumbnail": "🎳",
-    "category": "Sports",
-    "description": "Audio library (with game examples)",
-    "buildCmd": "npm install && npm run build",
-    "outputDir": "dist/",
-    "verified": true
-  },
-  {
     "name": "memory-card-game",
     "repo": "https://github.com/WebDevSimplified/Mix-Or-Match.git",
     "stars": 250,
@@ -192,19 +206,10 @@
     "name": "car-race",
     "repo": "https://github.com/KeshavRajuR/Car-Race.git",
     "devices": [
-      "desktop", "mobile"
+      "desktop"
     ],
     "thumbnail": "🚗",
     "entryFile": "Main_menu.html"
-  },
-  {
-    "name": "street-racer",
-    "repo": "https://github.com/dwmkerr/spaceinvaders.git",
-    "devices": [
-      "desktop", "mobile"
-    ],
-    "thumbnail": "🎯",
-    "entryFile": "index.html"
   },
   {
     "name": "neon-racer",

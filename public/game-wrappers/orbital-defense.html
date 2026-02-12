@@ -272,13 +272,18 @@
             const distance = Math.max(canvas.width, canvas.height);
             const startX = planet.x + Math.cos(angle) * distance;
             const startY = planet.y + Math.sin(angle) * distance;
+
+            // Speed ramps up with wave (base) + score bonus (gradual pressure)
+            const waveBonus  = (wave - 1) * 0.35;
+            const scoreBonus = Math.floor(score / 500) * 0.12;
+            const missileSpeed = Math.min(1.2 + waveBonus + scoreBonus, 6.5);
             
             missiles.push({
                 x: startX,
                 y: startY,
                 targetX: planet.x + (Math.random() - 0.5) * planet.radius * 2,
                 targetY: planet.y + (Math.random() - 0.5) * planet.radius * 2,
-                speed: 1 + wave * 0.1,
+                speed: missileSpeed,
                 radius: 8,
                 trail: []
             });
@@ -327,7 +332,7 @@
         function checkWaveComplete() {
             if (missiles.length === 0 && Date.now() - lastSpawn > 3000) {
                 wave++;
-                spawnRate = Math.max(800, spawnRate - 100);
+                spawnRate = Math.max(500, spawnRate - 150);  // faster spawns each wave
                 shield = Math.min(100, shield + 20);
                 score += wave * 50;
                 playSound('shield');
