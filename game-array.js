@@ -1,10 +1,3 @@
-// ========== 50 HTML5/JAVASCRIPT MOBILE GAMES ==========
-// These work EXACTLY like you described:
-// 1. git clone
-// 2. npm install
-// 3. npm run build (or npm start)
-// 4. Deploy the dist/ or build/ folder
-
 const games = [
     {
         name: '2048-game',
@@ -16,18 +9,6 @@ const games = [
         description: 'Classic 2048 puzzle game',
         buildCmd: 'npm install && npm run build',
         outputDir: 'build/',
-        verified: true
-    },
-    {
-        name: 'asteroids-canvas',
-        repo: 'https://github.com/dmcinnes/HTML5-Asteroids.git',
-        stars: 200,
-        devices: ['mobile'],
-        thumbnail: '☄️',
-        category: 'Shooter',
-        description: 'Classic Asteroids game',
-        buildCmd: 'No build needed - static HTML',
-        outputDir: './',
         verified: true
     },
     {
@@ -159,3 +140,4 @@ console.log('4. npm run build (or npm start)');
 console.log('5. Deploy dist/ or build/ folder\n');
 
 module.exports = games;
+

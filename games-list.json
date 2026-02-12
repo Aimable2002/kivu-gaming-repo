@@ -1,5 +1,77 @@
 [
   {
+    "id": "bubble-pop-blast",
+    "name": "bubble-pop-blast",
+    "description": "Match 3 or more bubbles to pop them! Classic bubble shooter action",
+    "category": "Puzzle",
+    "difficulty": "Easy",
+    "devices": ["mobile", "desktop"],
+    "thumbnail": "🌟",
+    "path": "/mobile-games/bubble-pop-blast.html"
+},
+{
+    "id": "snake-neon",
+    "name": "snake-neon",
+    "description": "Classic snake game with neon graphics and modern controls",
+    "category": "Arcade",
+    "difficulty": "Medium",
+    "devices": ["mobile", "desktop"],
+    "thumbnail": "🐍",
+    "path": "/mobile-games/snake-neon.html"
+},
+    {
+        "id": "neon-highway-racer",
+        "name": "neon-highway-racer",
+        "description": "Top-down endless racing with cyberpunk neon aesthetic and nitro boost",
+        "category": "Arcade",
+        "difficulty": "Medium",
+        "devices": ["mobile", "desktop"],
+        "thumbnail": "🏎️",
+        "path": "/mobile-games/neon-highway-racer.html"
+    },
+    {
+        "id": "color-surge",
+        "name": "color-surge",
+        "description": "Match your ball color with obstacles in this reflex-testing color rush",
+        "category": "Arcade",
+        "difficulty": "Easy",
+        "devices": ["mobile", "desktop"],
+        "thumbnail": "🌈",
+        "path": "/mobile-games/color-surge.html"
+    },
+    {
+        "id": "hex-collapse",
+        "name": "hex-collapse",
+        "description": "Hexagonal match-3 puzzle game with tap-to-collapse mechanics",
+        "category": "Puzzle",
+        "difficulty": "Medium",
+        "devices": ["mobile", "desktop"],
+        "thumbnail": "⬡",
+        "path": "/mobile-games/hex-collapse.html"
+    },
+    {
+        "id": "orbital-defense",
+        "name": "orbital-defense",
+        "description": "Defend your planet! Tap missiles before they destroy your world",
+        "category": "Arcade",
+        "difficulty": "Hard",
+        "devices": ["mobile", "desktop"],
+        "thumbnail": "🛸",
+        "path": "/mobile-games/orbital-defense.html"
+    },
+    {
+        "id": "fruit-slash-fury",
+        "name": "fruit-slash-fury",
+        "description": "Swipe to slice fruits and build combos. Avo id the bombs!",
+        "category": "Arcade",
+        "difficulty": "Easy",
+        "devices": ["mobile", "desktop"],
+        "thumbnail": "🍉",
+        "path": "/mobile-games/fruit-slash-fury.html"
+    },
+
+  
+  {
     "name": "2048-game",
     "repo": "https://github.com/gabrielecirulli/2048.git",
     "stars": 12000,
@@ -11,20 +83,6 @@
     "description": "Classic 2048 puzzle game",
     "buildCmd": "npm install && npm run build",
     "outputDir": "build/",
-    "verified": true
-  },
-  {
-    "name": "asteroids-canvas",
-    "repo": "https://github.com/dmcinnes/HTML5-Asteroids.git",
-    "stars": 200,
-    "devices": [
-      "mobile"
-    ],
-    "thumbnail": "☄️",
-    "category": "Shooter",
-    "description": "Classic Asteroids game",
-    "buildCmd": "No build needed - static HTML",
-    "outputDir": "./",
     "verified": true
   },
   {
@@ -92,7 +150,7 @@
     "name": "car-race",
     "repo": "https://github.com/KeshavRajuR/Car-Race.git",
     "devices": [
-      "desktop"
+      "desktop", "mobile"
     ],
     "thumbnail": "🚗",
     "entryFile": "Main_menu.html"
@@ -101,7 +159,7 @@
     "name": "street-racer",
     "repo": "https://github.com/dwmkerr/spaceinvaders.git",
     "devices": [
-      "desktop"
+      "desktop", "mobile"
     ],
     "thumbnail": "🎯",
     "entryFile": "index.html"
@@ -142,16 +200,6 @@
       "mobile"
     ],
     "thumbnail": "💥",
-    "entryFile": "index.html"
-  },
-  {
-    "name": "drift-king",
-    "repo": "https://github.com/patorjk/JavaScript-Snake.git",
-    "devices": [
-      "desktop",
-      "mobile"
-    ],
-    "thumbnail": "👑",
     "entryFile": "index.html"
   },
   {

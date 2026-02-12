@@ -15,7 +15,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve downloaded games
 const gamesDir = path.join(__dirname, 'public', 'games');
 if (fs.existsSync(gamesDir)) {
     fs.readdirSync(gamesDir).forEach(gameFolder => {
@@ -23,14 +22,12 @@ if (fs.existsSync(gamesDir)) {
     });
 }
 
-// Load games from auto-generated list
 let gameConfigs = [];
 const gamesListPath = path.join(__dirname, 'games-list.json');
 
 if (fs.existsSync(gamesListPath)) {
     const downloadedGames = JSON.parse(fs.readFileSync(gamesListPath, 'utf-8'));
     
-    // Racing game descriptions
     const descriptionMap = {
         'hexgl': 'Futuristic anti-gravity racing at breakneck speeds',
         'crazy-racing': 'Fast-paced top-down racing with tight controls',
@@ -73,7 +70,6 @@ if (fs.existsSync(gamesListPath)) {
     }));
 }
 
-// API: Get games filtered by device
 app.get('/api/games', (req, res) => {
     const userAgent = req.headers['user-agent'] || '';
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
