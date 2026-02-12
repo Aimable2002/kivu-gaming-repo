@@ -1,5 +1,47 @@
 [
   {
+    "id": "beat-traper",
+    "name": "beat-traper",
+    "description": "click to make music beat",
+    "category": "Puzzle",
+    "difficulty": "Easy",
+    "devices": ["mobile", "desktop"],
+    "thumbnail": "🌟",
+    "path": "/mobile-games/beat-traper.html"
+},
+{
+    "id": "brick-breaker-blast",
+    "name": "brick-breaker-blast",
+    "description": "Classic brick-breaker-blast game with neon graphics and modern controls",
+    "category": "Arcade",
+    "difficulty": "Medium",
+    "devices": ["mobile", "desktop"],
+    "thumbnail": "🐍",
+    "path": "/mobile-games/brick-breaker-blast.html"
+},
+
+  {
+    "id": "sky-jumper",
+    "name": "sky-jumper",
+    "description": "click to jump to next kit",
+    "category": "Puzzle",
+    "difficulty": "Easy",
+    "devices": ["mobile", "desktop"],
+    "thumbnail": "🌟",
+    "path": "/mobile-games/sky-jumper.html"
+},
+{
+    "id": "maze-runner",
+    "name": "maze-runner",
+    "description": "Classic maze game with neon graphics and modern controls",
+    "category": "Arcade",
+    "difficulty": "Medium",
+    "devices": ["mobile", "desktop"],
+    "thumbnail": "🐍",
+    "path": "/mobile-games/maze-runner.html"
+},
+
+  {
     "id": "bubble-pop-blast",
     "name": "bubble-pop-blast",
     "description": "Match 3 or more bubbles to pop them! Classic bubble shooter action",
