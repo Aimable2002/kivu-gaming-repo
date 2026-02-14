@@ -138,6 +138,11 @@
             border-color: #00e5ff44;
             background: #00e5ff18;
         }
+        .answer-slot.misplaced {
+            border-color: #ff4444;
+            background: #ff222218;
+            color: #ff4444;
+        }
         .answer-slot.correct {
             background: #00ff6618;
             border-color: #00ff66;
@@ -381,10 +386,20 @@
         container.innerHTML = '';
         for (let i = 0; i < currentWord.length; i++) {
             const slot = document.createElement('div');
-            slot.className = 'answer-slot' + (answer[i] ? ' filled' : '');
-            slot.textContent = answer[i] || '';
+            const letter = answer[i];
+            let cls = 'answer-slot';
+            if (letter) {
+                // Letter is in the right spot → cyan (filled), wrong spot → red (misplaced)
+                if (letter === currentWord[i]) {
+                    cls += ' filled';
+                } else {
+                    cls += ' misplaced';
+                }
+            }
+            slot.className = cls;
+            slot.textContent = letter || '';
             slot.dataset.pos = i;
-            if (answer[i]) slot.onclick = () => removeFromAnswer(i);
+            if (letter) slot.onclick = () => removeFromAnswer(i);
             container.appendChild(slot);
         }
     }

@@ -43,7 +43,7 @@
         canvas.width = Math.min(window.innerWidth, 480);
         canvas.height = window.innerHeight;
         let gameActive = false, score = 0, lives = 3, combo = 0, bestCombo = 0, fruitsSliced = 0;
-        let spawnRate = 1500, lastSpawn = 0;
+        let spawnRate = 1500, lastSpawn = 0, fruitCount = 1, spawnBatchCount = 0;
         let swipePoints = [], currentSwipe = [];
         let fruits = [];
         const fruitTypes = [
@@ -70,7 +70,7 @@
         }
         function init() {
             gameActive = true; score = 0; lives = 3; combo = 0; bestCombo = 0; fruitsSliced = 0;
-            spawnRate = 1500; lastSpawn = Date.now();
+            spawnRate = 1500; lastSpawn = Date.now(); fruitCount = 1; spawnBatchCount = 0;
             fruits = []; particles = []; swipePoints = []; currentSwipe = [];
             document.getElementById('gameOver').style.display = 'none';
             updateUI(); gameLoop();
@@ -79,8 +79,11 @@
             const isBomb = Math.random() < 0.12;
             const type = isBomb ? bombType : fruitTypes[Math.floor(Math.random() * fruitTypes.length)];
             const x = Math.random() * (canvas.width - 100) + 50;
-            const vx = (Math.random() - 0.5) * 6;
-            const vy = -(14 + Math.random() * 8);
+            const vx = (Math.random() - 0.5) * (canvas.width * 0.008);
+
+            const peakFraction = 0.7 + Math.random() * 0.25; 
+            const peakPixels   = canvas.height * peakFraction;
+            const vy = -Math.sqrt(2 * 0.18 * peakPixels);
             fruits.push({ x, y: canvas.height + 50, vx, vy, rotation: 0, rotationSpeed: (Math.random() - 0.5) * 0.2, size: 40, type, sliced: false, isBomb });
         }
         function createParticles(x, y, color, count = 20) {
@@ -141,11 +144,14 @@
             if (!gameActive) return;
             const now = Date.now();
             if (now - lastSpawn > spawnRate) {
-                spawnFruit(); lastSpawn = now;
-                spawnRate = Math.max(700, spawnRate - 8);
+                spawnBatchCount++;
+                for (let s = 0; s < fruitCount; s++) { setTimeout(() => spawnFruit(), s * 200); }
+                lastSpawn = now;
+                if (spawnBatchCount % 6 === 0) fruitCount = Math.min(6, fruitCount + 1);
+                spawnRate = Math.max(1100, spawnRate - 5);
             }
             fruits.forEach((fruit, index) => {
-                fruit.x += fruit.vx; fruit.y += fruit.vy; fruit.vy += 0.35;
+                fruit.x += fruit.vx; fruit.y += fruit.vy; fruit.vy += 0.18;
                 fruit.rotation += fruit.rotationSpeed;
                 if (currentSwipe.length > 0 && !fruit.sliced) {
                     if (checkSwipeCollision(fruit, currentSwipe)) sliceFruit(fruit);

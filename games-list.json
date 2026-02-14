@@ -110,16 +110,6 @@
         "path": "/mobile-games/color-surge.html"
     },
     {
-        "id": "hex-collapse",
-        "name": "hex-collapse",
-        "description": "Hexagonal match-3 puzzle game with tap-to-collapse mechanics",
-        "category": "Puzzle",
-        "difficulty": "Medium",
-        "devices": ["mobile", "desktop"],
-        "thumbnail": "⬡",
-        "path": "/mobile-games/hex-collapse.html"
-    },
-    {
         "id": "orbital-defense",
         "name": "orbital-defense",
         "description": "Defend your planet! Tap missiles before they destroy your world",
