@@ -1,32 +1,32 @@
 [
 
   { 
-    "id":"tetris", 
-    "name":"tetris", 
-    "description":"Tap to aim your shot and score past the goalkeeper", 
+    "id":"tap-target", 
+    "name":"tap-target", 
+    "description":"Tap to aim your shot and score target", 
     "category":"Sports", 
     "difficulty":"Easy", 
     "devices":["mobile","desktop"], 
-    "thumbnail":"⚽", "path":"/mobile-games/tetris.html" 
+    "thumbnail":"⚽", "path":"/mobile-games/tap-target.html" 
   },
   { 
-    "id":"pong", 
-    "name":"pong", 
-    "description":"Place towers, spend gold, survive 10 waves of enemies", 
+    "id":"color-tap", 
+    "name":"color-tap", 
+    "description":"tap the color of text", 
     "category":"Strategy", 
     "difficulty":"Hard", 
     "devices":["mobile","desktop"], 
-    "thumbnail":"🏰", "path":"/mobile-games/pong.html" 
+    "thumbnail":"🏰", "path":"/mobile-games/color-tap.html" 
   },
   { 
-    "id":"endless_runner", 
-    "name":"endless_runner", 
-    "description":"Unscramble words fast! Build combos before the timer runs out", 
+    "id":"math", 
+    "name":"math", 
+    "description":"math game aiming to to teach mathematics", 
     "category":"Word", 
     "difficulty":"Medium", 
     "devices":["mobile","desktop"], 
     "thumbnail":"📝", 
-    "path":"/mobile-games/endless_runner.html" 
+    "path":"/mobile-games/math.html" 
   },
 
   { 
