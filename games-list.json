@@ -1,6 +1,35 @@
 [
 
   { 
+    "id":"tetris", 
+    "name":"tetris", 
+    "description":"Tap to aim your shot and score past the goalkeeper", 
+    "category":"Sports", 
+    "difficulty":"Easy", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"⚽", "path":"/mobile-games/tetris.html" 
+  },
+  { 
+    "id":"pong", 
+    "name":"pong", 
+    "description":"Place towers, spend gold, survive 10 waves of enemies", 
+    "category":"Strategy", 
+    "difficulty":"Hard", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"🏰", "path":"/mobile-games/pong.html" 
+  },
+  { 
+    "id":"endless_runner", 
+    "name":"endless_runner", 
+    "description":"Unscramble words fast! Build combos before the timer runs out", 
+    "category":"Word", 
+    "difficulty":"Medium", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"📝", 
+    "path":"/mobile-games/endless_runner.html" 
+  },
+
+  { 
     "id":"penalty-shootout", 
     "name":"penalty-shootout", 
     "description":"Tap to aim your shot and score past the goalkeeper", 

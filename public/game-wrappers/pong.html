@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>PONG!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(160deg, #fffde7 0%, #e3f2fd 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100vh;
+    font-family: 'Fredoka One', cursive;
+    overflow: hidden;
+  }
+  #title { font-size: 40px; color: #e65100; text-shadow: 3px 3px 0 #fff8e1, 5px 5px 0 #ffca28; margin-bottom: 8px; letter-spacing: 3px; }
+  #scoreboard { display: flex; gap: 24px; align-items: center; margin-bottom: 10px; font-size: 30px; color: #1a237e; background: white; padding: 6px 30px; border-radius: 50px; box-shadow: 0 5px 0 #90caf9; }
+  canvas { border-radius: 22px; border: 5px solid #fff; box-shadow: 0 8px 32px rgba(0,0,0,0.16); display: block; touch-action: none; }
+  #hint { margin-top: 12px; font-size: 14px; color: #1565c0; text-align: center; opacity: 0.7; }
+  #overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display:flex; flex-direction:column; align-items:center; justify-content:center; border-radius:18px; gap:14px; }
+  #overlay h2 { font-size: 34px; color: #e65100; }
+  #overlay .sub { font-size: 16px; color: #1565c0; animation: blink 1s step-end infinite; text-align:center; line-height:1.8; }
+  #overlay .win { font-size: 22px; color: #2e7d32; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+</style>
+</head>
+<body>
+<div id="title">🏓 PONG!</div>
+<div id="scoreboard"><span id="sl">0</span><span style="color:#ccc">vs</span><span id="sr">0</span></div>
+<div style="position:relative">
+  <canvas id="c"></canvas>
+  <div id="overlay">
+    <h2>🏓 PONG!</h2>
+    <div class="sub">FIRST TO 5 WINS!<br><br>TAP LEFT SIDE → LEFT PADDLE<br>TAP RIGHT SIDE → RIGHT PADDLE</div>
+  </div>
+</div>
+<div id="hint">TAP ANYWHERE TO START</div>
+<script>
+function rRect(ctx2, x, y, w, h, r) {
+  r = Math.min(r, w/2, h/2);
+  ctx2.beginPath();
+  ctx2.moveTo(x + r, y);
+  ctx2.lineTo(x + w - r, y);
+  ctx2.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx2.lineTo(x + w, y + h - r);
+  ctx2.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx2.lineTo(x + r, y + h);
+  ctx2.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx2.lineTo(x, y + r);
+  ctx2.quadraticCurveTo(x, y, x + r, y);
+  ctx2.closePath();
+}
+const c = document.getElementById('c'), ctx = c.getContext('2d');
+const overlay = document.getElementById('overlay');
+const sl = document.getElementById('sl'), sr = document.getElementById('sr');
+const SZ = Math.min(window.innerWidth - 48, 390);
+const W = SZ, H = Math.round(SZ * 1.5);
+c.width = W; c.height = H;
+c.style.touchAction = 'none';
+const PW = Math.round(W*0.055), PH = Math.round(H*0.17);
+const BS = Math.round(W*0.055);
+let state = 'idle', scores = [0,0];
+let lp = {y: H/2-PH/2}, rp = {y: H/2-PH/2};
+let ball = {x:W/2,y:H/2,dx:0,dy:0};
+let tLeft = null, tRight = null;
+function resetBall(dir=1) {
+  ball.x=W/2; ball.y=H/2;
+  const a=(Math.random()*40-20)*Math.PI/180, sp=H*0.009;
+  ball.dx=dir*sp*Math.cos(a); ball.dy=sp*Math.sin(a);
+}
+function start() {
+  scores=[0,0]; sl.textContent='0'; sr.textContent='0';
+  lp.y=H/2-PH/2; rp.y=H/2-PH/2;
+  resetBall(1); state='playing'; overlay.style.display='none';
+}
+function gameOver() {
+  state='over';
+  overlay.innerHTML=`<h2>🎉 Game Over!</h2><div class="win">${scores[0]>scores[1]?'⬅️ Left':'Right ➡️'} Wins!</div><div class="sub">Tap to Play Again</div>`;
+  overlay.style.display='flex';
+}
+c.addEventListener('touchstart', e=>{
+  e.preventDefault();
+  if(state!=='playing'){start();return;}
+  for(const t of e.changedTouches) {
+    const r=c.getBoundingClientRect(), tx=(t.clientX - r.left) * (W / r.width), ty=(t.clientY - r.top) * (H / r.height);
+    if(tx<W/2) tLeft={id:t.identifier,y:ty};
+    else tRight={id:t.identifier,y:ty};
+  }
+},{passive:false});
+c.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  for(const t of e.changedTouches){
+    const r=c.getBoundingClientRect(), ty=(t.clientY - r.top) * (H / r.height);
+    if(tLeft&&tLeft.id===t.identifier) tLeft.y = Math.max(0, Math.min(H, ty));
+    if(tRight&&tRight.id===t.identifier) tRight.y = Math.max(0, Math.min(H, ty));
+  }
+},{passive:false});
+c.addEventListener('touchend',e=>{
+  e.preventDefault();
+  for(const t of e.changedTouches){
+    if(tLeft&&tLeft.id===t.identifier)tLeft=null;
+    if(tRight&&tRight.id===t.identifier)tRight=null;
+  }
+});
+c.addEventListener('click',()=>{if(state!=='playing')start();});
+function update(){
+  if(state!=='playing')return;
+  if(tLeft){lp.y+=(tLeft.y-PH/2-lp.y)*0.18;}
+  if(tRight){rp.y+=(tRight.y-PH/2-rp.y)*0.18;}
+  lp.y=Math.max(0,Math.min(H-PH,lp.y));
+  rp.y=Math.max(0,Math.min(H-PH,rp.y));
+  ball.x+=ball.dx; ball.y+=ball.dy;
+  if(ball.y-BS/2<0){ball.y=BS/2;ball.dy*=-1;}
+  if(ball.y+BS/2>H){ball.y=H-BS/2;ball.dy*=-1;}
+  const lpx=W*0.04, rpx=W-W*0.04-PW;
+  if(ball.dx<0&&ball.x-BS/2<=lpx+PW&&ball.x>=lpx&&ball.y>=lp.y&&ball.y<=lp.y+PH){
+    ball.dx*=-1.05; ball.dy+=(ball.y-(lp.y+PH/2))*0.09; ball.x=lpx+PW+BS/2;
+  }
+  if(ball.dx>0&&ball.x+BS/2>=rpx&&ball.x<=rpx+PW&&ball.y>=rp.y&&ball.y<=rp.y+PH){
+    ball.dx*=-1.05; ball.dy+=(ball.y-(rp.y+PH/2))*0.09; ball.x=rpx-BS/2;
+  }
+  const sp=Math.hypot(ball.dx,ball.dy);
+  if(sp>H*0.024){ball.dx=ball.dx/sp*H*0.024;ball.dy=ball.dy/sp*H*0.024;}
+  if(ball.x<0){scores[1]++;sr.textContent=scores[1];if(scores[1]>=5)gameOver();else resetBall(1);}
+  if(ball.x>W){scores[0]++;sl.textContent=scores[0];if(scores[0]>=5)gameOver();else resetBall(-1);}
+}
+function draw(){
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#fffde7'); g.addColorStop(1,'#e3f2fd');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  ctx.setLineDash([14,10]); ctx.strokeStyle='rgba(100,160,255,0.3)'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(W/2,0); ctx.lineTo(W/2,H); ctx.stroke(); ctx.setLineDash([]);
+  const lpx=W*0.04, rpx=W-W*0.04-PW;
+  ctx.fillStyle='#ff6d00';
+  rRect(ctx, lpx,lp.y,PW,PH,10); ctx.fill();
+  ctx.fillStyle='#1565c0';
+  rRect(ctx, rpx,rp.y,PW,PH,10); ctx.fill();
+  ctx.fillStyle='#fdd835';
+  ctx.beginPath(); ctx.arc(ball.x,ball.y,BS/2,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.55)';
+  ctx.beginPath(); ctx.arc(ball.x-BS*0.14,ball.y-BS*0.14,BS*0.22,0,Math.PI*2); ctx.fill();
+  if(state==='playing'){
+    ctx.fillStyle='rgba(255,109,0,0.04)'; ctx.fillRect(0,0,W/2,H);
+    ctx.fillStyle='rgba(21,101,192,0.04)'; ctx.fillRect(W/2,0,W/2,H);
+  }
+}
+function loop(){update();draw();requestAnimationFrame(loop);}
+loop();
+</script>
+</body>
+</html>
