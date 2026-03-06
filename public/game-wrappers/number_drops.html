@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Number Drops</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito:wght@700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
+body{min-height:100vh;background:#050A14;overflow:hidden;font-family:'Nunito',sans-serif;color:white;touch-action:none;}
+canvas{position:fixed;inset:0;z-index:0;}
+
+#ui{position:fixed;inset:0;z-index:10;pointer-events:none;}
+
+/* EQUATION BOX */
+#eq-box{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:20;padding:14px 16px 0;width:100%;max-width:480px;pointer-events:none;}
+#eq-card{background:linear-gradient(135deg,rgba(15,25,50,.95),rgba(10,15,35,.95));border:1.5px solid rgba(56,189,248,.2);border-radius:20px;padding:14px 20px;text-align:center;box-shadow:0 4px 30px rgba(56,189,248,.12),inset 0 1px 0 rgba(255,255,255,.05);}
+#eq-label{font-size:.55rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:6px;}
+#equation{font-family:'Orbitron';font-size:2rem;font-weight:900;color:white;letter-spacing:2px;}
+#eq-sub{font-size:.65rem;color:rgba(255,255,255,.2);margin-top:4px;letter-spacing:1px;}
+
+/* STATS ROW */
+#stats{position:fixed;top:118px;left:50%;transform:translateX(-50%);z-index:20;width:100%;max-width:480px;padding:0 16px;display:flex;gap:8px;pointer-events:none;}
+.stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:6px 10px;flex:1;text-align:center;}
+.sv{font-family:'Orbitron';font-size:1rem;font-weight:700;}
+.sl{font-size:.48rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.25);margin-top:1px;}
+
+/* LIVES */
+#lives{position:fixed;top:172px;left:50%;transform:translateX(-50%);z-index:20;font-size:1.3rem;letter-spacing:4px;pointer-events:none;}
+
+/* SCREENS */
+.screen{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;background:rgba(5,10,20,.97);}
+.nd-title{font-family:'Orbitron';font-size:2.8rem;font-weight:900;background:linear-gradient(135deg,#38BDF8,#A3E635,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;letter-spacing:3px;line-height:1.1;margin-bottom:6px;}
+.nd-sub{font-size:.6rem;color:rgba(255,255,255,.25);letter-spacing:4px;text-transform:uppercase;margin-bottom:22px;}
+.nd-info{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:14px 22px;max-width:300px;font-size:.88rem;color:rgba(255,255,255,.5);line-height:1.9;text-align:center;margin-bottom:24px;}
+.nd-btn{background:linear-gradient(135deg,#38BDF8,#0284C7);color:white;border:none;border-radius:14px;padding:15px 52px;font-family:'Orbitron';font-size:.95rem;font-weight:700;letter-spacing:2px;cursor:pointer;box-shadow:0 5px 20px rgba(56,189,248,.35);}
+.nd-btn:active{transform:scale(.95);}
+.nd-btn.green{background:linear-gradient(135deg,#A3E635,#65A30D);box-shadow:0 5px 20px rgba(163,230,53,.3);}
+.nd-btn.ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);box-shadow:none;margin-top:10px;}
+.end-num{font-family:'Orbitron';font-size:5rem;font-weight:900;background:linear-gradient(135deg,#FFD700,#A3E635);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:6px 0;}
+.end-stats{display:flex;gap:10px;width:100%;max-width:280px;margin:10px 0 20px;}
+.est{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 6px;text-align:center;}
+.esv{font-family:'Orbitron';font-size:1.1rem;font-weight:700;color:white;}
+.esl{font-size:.5rem;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="ui">
+  <div id="eq-box">
+    <div id="eq-card">
+      <div id="eq-label">TAP THE CORRECT ANSWER</div>
+      <div id="equation">? + ? = ?</div>
+      <div id="eq-sub">falling numbers ↓</div>
+    </div>
+  </div>
+  <div id="stats">
+    <div class="stat"><div class="sv" id="score-v" style="color:#38BDF8">0</div><div class="sl">Score</div></div>
+    <div class="stat"><div class="sv" id="streak-v" style="color:#FFD700">0</div><div class="sl">Streak</div></div>
+    <div class="stat"><div class="sv" id="level-v" style="color:#A3E635">1</div><div class="sl">Level</div></div>
+  </div>
+  <div id="lives">❤️❤️❤️</div>
+</div>
+
+<!-- START -->
+<div class="screen" id="start-screen">
+  <div style="font-size:4rem;margin-bottom:10px">🔢</div>
+  <div class="nd-title">NUMBER<br>DROPS</div>
+  <div class="nd-sub">Quick Math Arcade</div>
+  <div class="nd-info">
+    🧮 An <b>equation</b> shows at the top<br>
+    🔢 <b>Numbers fall</b> from the sky<br>
+    👆 <b>Tap the correct answer</b> before it falls off!<br>
+    ❌ Wrong tap or miss = lose a life!
+  </div>
+  <button class="nd-btn" onclick="startGame()">Drop In! ▶</button>
+</div>
+
+<!-- GAME OVER -->
+<div class="screen" id="over-screen" style="display:none">
+  <div style="font-size:3rem;margin-bottom:6px">💥</div>
+  <div class="nd-title" style="font-size:2.3rem">Game Over</div>
+  <div class="end-num" id="end-score">0</div>
+  <p style="color:rgba(255,255,255,.3);font-size:.7rem;margin-bottom:10px;letter-spacing:2px">FINAL SCORE</p>
+  <div class="end-stats">
+    <div class="est"><div class="esv" id="end-level">1</div><div class="esl">Level</div></div>
+    <div class="est"><div class="esv" id="end-streak">0</div><div class="esl">Best Streak</div></div>
+    <div class="est"><div class="esv" id="end-correct">0</div><div class="esl">Correct</div></div>
+  </div>
+  <button class="nd-btn green" onclick="startGame()">Play Again ▶</button>
+  <button class="nd-btn ghost" onclick="goMenu()">Menu</button>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W = canvas.width = window.innerWidth;
+let H = canvas.height = window.innerHeight;
+
+/* ── GAME STATE ── */
+let drops = [], score = 0, streak = 0, bestStreak = 0, lives = 3;
+let level = 1, correctCount = 0, questionsAnswered = 0;
+let currentAnswer = 0, equation = '';
+let active = false, frameN = 0;
+let raf;
+
+/* ── LEVEL CONFIG ── */
+function levelCfg(lv) {
+  const speed = Math.min(1.2 + lv * 0.25, 5);
+  const spawnRate = Math.max(50, 110 - lv * 8); // frames between spawns
+  const numDecoys = Math.min(1 + Math.floor(lv / 2), 5); // wrong answers on screen
+  const maxOps = lv <= 2 ? ['+'] : lv <= 5 ? ['+', '-'] : ['+', '-', '×'];
+  return { speed, spawnRate, numDecoys, maxOps };
+}
+
+/* ── EQUATION GENERATOR ── */
+function genEquation(lv) {
+  const ops = levelCfg(lv).maxOps;
+  const op = ops[Math.floor(Math.random() * ops.length)];
+  let a, b, ans;
+  const range = Math.min(5 + lv * 2, 20);
+
+  if (op === '+') {
+    a = Math.floor(Math.random() * range) + 1;
+    b = Math.floor(Math.random() * range) + 1;
+    ans = a + b;
+  } else if (op === '-') {
+    a = Math.floor(Math.random() * range) + 5;
+    b = Math.floor(Math.random() * (a)) + 1;
+    ans = a - b;
+  } else {
+    a = Math.floor(Math.random() * Math.min(lv + 3, 10)) + 1;
+    b = Math.floor(Math.random() * Math.min(lv + 2, 9)) + 1;
+    ans = a * b;
+  }
+  return { eq: `${a}  ${op}  ${b}  =  ?`, answer: ans };
+}
+
+/* ── DROPS ── */
+const COLORS = ['#38BDF8', '#A3E635', '#FFD700', '#FB923C', '#F472B6', '#C084FC'];
+
+function spawnDrops() {
+  const cfg = levelCfg(level);
+  const numDecoys = cfg.numDecoys;
+
+  // Generate decoys: wrong answers near the correct one
+  const decoys = new Set();
+  while (decoys.size < numDecoys) {
+    const offset = Math.floor(Math.random() * 14) - 7;
+    const v = currentAnswer + offset;
+    if (v !== currentAnswer && v >= 0) decoys.add(v);
+  }
+
+  const allValues = [currentAnswer, ...Array.from(decoys)];
+  // Shuffle x positions
+  const positions = allValues.map((_, i) => Math.floor((i + 0.5) / allValues.length * W));
+  positions.sort(() => Math.random() - .5);
+
+  drops = allValues.map((val, i) => ({
+    x: positions[i],
+    y: -50 - Math.random() * 60,
+    val,
+    isCorrect: val === currentAnswer,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    r: 36,
+    speed: levelCfg(level).speed * (0.8 + Math.random() * 0.4),
+    popped: false,
+    popAnim: 0,
+    hitAnim: 0,
+  }));
+}
+
+function newQuestion() {
+  const { eq, answer } = genEquation(level);
+  equation = eq;
+  currentAnswer = answer;
+  document.getElementById('equation').textContent = eq;
+  drops = [];
+}
+
+/* ── DRAW ── */
+function drawBg() {
+  // Dark starfield
+  ctx.fillStyle = '#050A14';
+  ctx.fillRect(0, 0, W, H);
+  // Grid lines
+  ctx.strokeStyle = 'rgba(56,189,248,.03)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  // Bottom danger zone
+  const dg = ctx.createLinearGradient(0, H - 80, 0, H);
+  dg.addColorStop(0, 'transparent');
+  dg.addColorStop(1, 'rgba(239,68,68,.15)');
+  ctx.fillStyle = dg;
+  ctx.fillRect(0, H - 80, W, 80);
+  // Danger line
+  ctx.strokeStyle = 'rgba(239,68,68,.3)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([12, 8]);
+  ctx.beginPath(); ctx.moveTo(0, H - 40); ctx.lineTo(W, H - 40); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawDrop(d) {
+  if (d.popped) {
+    // Burst animation
+    const prog = d.popAnim / 15;
+    const burst = d.isCorrect ? '#A3E635' : '#EF4444';
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      const dist = prog * 50;
+      ctx.save();
+      ctx.globalAlpha = (1 - prog) * 0.8;
+      ctx.fillStyle = burst;
+      ctx.beginPath();
+      ctx.arc(d.x + Math.cos(a) * dist, d.y + Math.sin(a) * dist, 4 * (1 - prog), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    return;
+  }
+
+  const r = d.r;
+  ctx.save();
+  // Glow
+  ctx.shadowColor = d.color;
+  ctx.shadowBlur = 18;
+  // Circle
+  const g = ctx.createRadialGradient(d.x - r * .25, d.y - r * .25, 0, d.x, d.y, r);
+  g.addColorStop(0, d.color + 'FF');
+  g.addColorStop(1, d.color + '88');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
+  ctx.fill();
+  // Ring
+  ctx.strokeStyle = 'rgba(255,255,255,.25)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  // Number
+  ctx.fillStyle = 'white';
+  ctx.font = `900 ${r * 0.75}px Orbitron`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(d.val, d.x, d.y);
+  ctx.restore();
+}
+
+function loop() {
+  if (!active) return;
+  frameN++;
+  drawBg();
+
+  const cfg = levelCfg(level);
+
+  // Spawn drops periodically if none
+  if (drops.filter(d => !d.popped).length === 0) spawnDrops();
+
+  drops.forEach(d => {
+    if (d.popped) { d.popAnim++; drawDrop(d); return; }
+    d.y += d.speed;
+
+    // Escaped off bottom
+    if (d.y > H - 40 + d.r) {
+      if (d.isCorrect) {
+        // Correct answer escaped — lose life
+        lives--;
+        streak = 0;
+        document.getElementById('streak-v').textContent = '0';
+        updateLives();
+        d.popped = true;
+        if (lives <= 0) { setTimeout(gameOver, 400); active = false; }
+        else newQuestion();
+      } else {
+        d.popped = true; // just remove decoy
+      }
+    }
+    drawDrop(d);
+  });
+
+  // Clean up fully animated pops
+  drops = drops.filter(d => !d.popped || d.popAnim < 15);
+
+  // Level up every 10 correct
+  if (correctCount >= 10 + (level - 1) * 5) {
+    level++;
+    correctCount = 0;
+    document.getElementById('level-v').textContent = level;
+    showLevelUp();
+  }
+
+  raf = requestAnimationFrame(loop);
+}
+
+function tapDrop(x, y) {
+  if (!active) return;
+  for (let d of drops) {
+    if (d.popped) continue;
+    const dist = Math.hypot(x - d.x, y - d.y);
+    if (dist < d.r + 10) {
+      if (d.isCorrect) {
+        // Correct!
+        const pts = 10 * Math.min(streak + 1, 8);
+        score += pts;
+        streak++;
+        bestStreak = Math.max(bestStreak, streak);
+        correctCount++;
+        questionsAnswered++;
+        document.getElementById('score-v').textContent = score;
+        document.getElementById('streak-v').textContent = streak;
+        d.popped = true;
+        showFx('+' + pts + (streak > 2 ? ' 🔥' : ''), '#A3E635', x, y);
+        setTimeout(newQuestion, 100);
+      } else {
+        // Wrong
+        lives--;
+        streak = 0;
+        document.getElementById('streak-v').textContent = '0';
+        d.popped = true;
+        showFx('WRONG ✗', '#EF4444', x, y);
+        updateLives();
+        if (lives <= 0) { setTimeout(gameOver, 400); active = false; }
+        else setTimeout(newQuestion, 300);
+      }
+      break;
+    }
+  }
+}
+
+canvas.addEventListener('click', e => tapDrop(e.clientX, e.clientY));
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  tapDrop(e.touches[0].clientX, e.touches[0].clientY);
+}, { passive: false });
+
+function updateLives() {
+  document.getElementById('lives').textContent = '❤️'.repeat(Math.max(0, lives)) + '🖤'.repeat(Math.max(0, 3 - lives));
+}
+
+let levelUpTO;
+function showLevelUp() {
+  clearTimeout(levelUpTO);
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:200;font-family:Orbitron;font-size:2rem;font-weight:900;color:#FFD700;text-shadow:0 0 20px #FFD700;pointer-events:none;animation:lvlPop .8s forwards;';
+  el.textContent = `LEVEL ${level}! ⬆`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 800);
+}
+
+function showFx(txt, color, x, y) {
+  const el = document.createElement('div');
+  el.style.cssText = `position:fixed;left:${x}px;top:${y - 20}px;z-index:200;font-family:Orbitron;font-size:1.1rem;font-weight:700;color:${color};pointer-events:none;animation:fxDrop .6s forwards;transform:translateX(-50%);`;
+  el.textContent = txt;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 600);
+}
+
+function startGame() {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('over-screen').style.display = 'none';
+  score = 0; streak = 0; bestStreak = 0; lives = 3; level = 1;
+  correctCount = 0; questionsAnswered = 0; frameN = 0; drops = [];
+  active = true;
+  document.getElementById('score-v').textContent = '0';
+  document.getElementById('streak-v').textContent = '0';
+  document.getElementById('level-v').textContent = '1';
+  updateLives();
+  newQuestion();
+  if (raf) cancelAnimationFrame(raf);
+  loop();
+}
+
+function gameOver() {
+  document.getElementById('end-score').textContent = score;
+  document.getElementById('end-level').textContent = level;
+  document.getElementById('end-streak').textContent = bestStreak;
+  document.getElementById('end-correct').textContent = questionsAnswered;
+  document.getElementById('over-screen').style.display = 'flex';
+}
+
+function goMenu() {
+  active = false;
+  document.getElementById('over-screen').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'flex';
+}
+
+window.addEventListener('resize', () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; });
+
+// CSS for animations
+const style = document.createElement('style');
+style.textContent = `
+@keyframes lvlPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}30%{opacity:1;transform:translate(-50%,-50%) scale(1.2);}70%{opacity:1;}100%{opacity:0;transform:translate(-50%,-50%) scale(.9);}}
+@keyframes fxDrop{0%{opacity:1;transform:translateX(-50%) translateY(0);}100%{opacity:0;transform:translateX(-50%) translateY(-50px);}}
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>

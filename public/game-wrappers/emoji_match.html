@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Emoji Match</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
+:root{
+  --bg:#0A0A12;
+  --surface:#12121E;
+  --card:#1A1A2E;
+  --accent:#FF3CAC;
+  --accent2:#784BA0;
+  --accent3:#2B86C5;
+  --text:#FAFAFA;
+}
+body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow:hidden;display:flex;flex-direction:column;align-items:center;touch-action:manipulation;}
+
+/* animated bg */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+#ui{position:relative;z-index:1;width:100%;max-width:480px;display:flex;flex-direction:column;align-items:center;height:100vh;}
+
+/* HUD */
+#hud{width:100%;padding:12px 16px 6px;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:8px 14px;text-align:center;flex:1;}
+.stat-v{font-family:'Syne';font-size:1.4rem;font-weight:800;line-height:1;}
+.stat-l{font-size:.5rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:2px;}
+
+/* TIMER BAR */
+#timer-bar{width:calc(100% - 32px);height:4px;background:rgba(255,255,255,.07);border-radius:4px;margin:4px 0 8px;overflow:hidden;}
+#timer-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent));border-radius:4px;transition:width .2s linear;}
+
+/* LEVEL LABEL */
+#level-label{font-family:'Syne';font-size:.7rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:6px;}
+
+/* GRID */
+#grid{display:grid;gap:8px;padding:0 12px;width:100%;flex:1;align-content:center;}
+
+/* CARD */
+.card{border-radius:16px;background:var(--card);border:2px solid rgba(255,255,255,.06);cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;transform-style:preserve-3d;transition:transform .35s cubic-bezier(.4,0,.2,1),border-color .2s;aspect-ratio:1;}
+.card:active{transform:scale(.9);}
+.card.flipped{transform:rotateY(180deg);}
+.card.matched{border-color:rgba(255,60,172,.5);background:#1E0E1E;}
+.card.matched .card-back{box-shadow:inset 0 0 20px rgba(255,60,172,.2);}
+.card.shake{animation:shake .3s ease;}
+.card-front,.card-back{position:absolute;inset:0;border-radius:14px;display:flex;align-items:center;justify-content:center;backface-visibility:hidden;}
+.card-front{background:linear-gradient(135deg,#1A1A2E,#12122A);font-size:1.5rem;color:rgba(255,255,255,.06);}
+.card-front::after{content:'?';font-family:'Syne';font-size:1.4rem;font-weight:900;color:rgba(255,255,255,.12);}
+.card-back{transform:rotateY(180deg);font-size:2rem;}
+
+/* SCREENS */
+.screen{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;background:rgba(10,10,18,.97);}
+.big-title{font-family:'Syne';font-size:3rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;line-height:1.1;margin-bottom:6px;}
+.sub{font-size:.65rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:24px;}
+.info{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px 22px;max-width:300px;font-size:.88rem;color:rgba(255,255,255,.5);line-height:1.9;text-align:center;margin-bottom:24px;}
+.play-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border:none;border-radius:14px;padding:16px 52px;font-family:'Syne';font-size:1rem;font-weight:700;letter-spacing:2px;cursor:pointer;box-shadow:0 6px 24px rgba(255,60,172,.35);}
+.play-btn:active{transform:scale(.95);}
+.play-btn.blue{background:linear-gradient(135deg,#2B86C5,#1A5A8A);box-shadow:0 6px 24px rgba(43,134,197,.35);}
+.play-btn.ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);box-shadow:none;margin-top:10px;}
+
+/* WIN screen */
+.win-score{font-family:'Syne';font-size:5rem;font-weight:900;background:linear-gradient(135deg,#FFD700,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:4px 0;}
+.stars{font-size:2.5rem;margin:6px 0;}
+.win-stats{display:flex;gap:10px;width:100%;max-width:280px;margin:10px 0 20px;}
+.ws{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 6px;text-align:center;}
+.wsv{font-family:'Syne';font-size:1.2rem;font-weight:800;color:white;}
+.wsl{font-size:.5rem;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+
+/* FX pops */
+.fx{position:fixed;z-index:300;pointer-events:none;font-family:'Syne';font-size:1.4rem;font-weight:800;animation:fxPop .7s forwards;transform:translateX(-50%);}
+@keyframes fxPop{0%{opacity:0;transform:translateX(-50%) translateY(0);}20%{opacity:1;}80%{opacity:1;transform:translateX(-50%) translateY(-50px);}100%{opacity:0;transform:translateX(-50%) translateY(-70px);}}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+@keyframes cardAppear{from{transform:scale(.5) rotateY(90deg);opacity:0;}to{transform:scale(1) rotateY(0deg);opacity:1;}}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div id="ui">
+  <div id="hud">
+    <div class="stat"><div class="stat-v" id="score-v" style="color:#FF3CAC">0</div><div class="stat-l">Score</div></div>
+    <div class="stat"><div class="stat-v" id="level-v" style="color:#FFD700">1</div><div class="stat-l">Level</div></div>
+    <div class="stat"><div class="stat-v" id="combo-v" style="color:#2B86C5">×1</div><div class="stat-l">Combo</div></div>
+    <div class="stat"><div class="stat-v" id="pairs-v" style="color:#A3E635">0/0</div><div class="stat-l">Pairs</div></div>
+  </div>
+  <div id="timer-bar"><div id="timer-fill" style="width:100%"></div></div>
+  <div id="level-label">LEVEL 1 — FIND ALL PAIRS</div>
+  <div id="grid"></div>
+</div>
+
+<!-- START -->
+<div class="screen" id="start-screen">
+  <div style="font-size:4rem;margin-bottom:10px">🃏</div>
+  <div class="big-title">Emoji<br>Match</div>
+  <div class="sub">Memory · Speed · Combos</div>
+  <div class="info">
+    👆 <b>Tap cards</b> to flip them over<br>
+    🧠 <b>Remember</b> where each emoji is<br>
+    ✅ Match <b>2 identical emojis</b> to clear them<br>
+    ⚡ Fast matches = <b>combo bonus!</b>
+  </div>
+  <button class="play-btn" onclick="startGame()">Play Now ▶</button>
+</div>
+
+<!-- WIN -->
+<div class="screen" id="win-screen" style="display:none">
+  <div class="stars" id="win-stars">⭐⭐⭐</div>
+  <div class="big-title" style="font-size:2.2rem">Level Clear!</div>
+  <div class="win-score" id="win-score">0</div>
+  <div class="win-stats">
+    <div class="ws"><div class="wsv" id="wlv">1</div><div class="wsl">Level</div></div>
+    <div class="wsv-w ws"><div class="wsv" id="wtime">0s</div><div class="wsl">Time Left</div></div>
+    <div class="ws"><div class="wsv" id="wmax">×1</div><div class="wsl">Max Combo</div></div>
+  </div>
+  <button class="play-btn" onclick="nextLevel()">Next Level ▶</button>
+  <button class="play-btn ghost" onclick="goMenu()">Menu</button>
+</div>
+
+<!-- FAIL -->
+<div class="screen" id="fail-screen" style="display:none">
+  <div style="font-size:3.5rem;margin-bottom:8px">⏰</div>
+  <div class="big-title" style="font-size:2.5rem;color:#EF4444">Time's Up!</div>
+  <p style="color:rgba(255,255,255,.4);margin:10px 0 6px">Score: <span id="fail-score" style="color:#FF3CAC;font-size:1.3rem;font-family:'Syne'">0</span></p>
+  <p style="color:rgba(255,255,255,.3);font-size:.85rem;margin-bottom:24px">You matched <span id="fail-pairs" style="color:#A3E635">0</span> pairs</p>
+  <button class="play-btn" onclick="startLevel()">Try Again 🔄</button>
+  <button class="play-btn ghost" onclick="goMenu()">Menu</button>
+</div>
+
+<script>
+/* ── BG PARTICLES ── */
+const bgC=document.getElementById('bg-canvas');
+const bgX=bgC.getContext('2d');
+bgC.width=window.innerWidth; bgC.height=window.innerHeight;
+const particles=Array.from({length:40},()=>({
+  x:Math.random()*bgC.width, y:Math.random()*bgC.height,
+  r:Math.random()*1.5+.5, speed:Math.random()*.4+.1,
+  color:`hsl(${Math.random()*60+280},70%,60%)`, alpha:Math.random()*.4+.1
+}));
+function drawBg(){
+  bgX.clearRect(0,0,bgC.width,bgC.height);
+  particles.forEach(p=>{
+    p.y-=p.speed; if(p.y<-5) p.y=bgC.height+5;
+    bgX.save(); bgX.globalAlpha=p.alpha;
+    bgX.fillStyle=p.color;
+    bgX.beginPath(); bgX.arc(p.x,p.y,p.r,0,Math.PI*2); bgX.fill();
+    bgX.restore();
+  });
+  requestAnimationFrame(drawBg);
+}
+drawBg();
+
+/* ── EMOJI POOL ── */
+const ALL_EMOJIS=['🔥','⚡','🎯','🌊','🎸','🚀','💎','🦋','🌈','⭐','🎭','🎪','🍕','🎮','👾','🤖','🦊','🐉','🌸','🎨','🏆','💀','🎲','🔮','🎵','🌙','🦄','🍦','🎃','🌺','⚽','🎸'];
+
+/* ── LEVEL CONFIG ── */
+function getLevelConfig(lv){
+  // pairs count grows with level
+  const pairs = Math.min(4 + Math.floor((lv-1)*1.5), 12);
+  // time in seconds
+  const time = Math.max(20, 60 - (lv-1)*3);
+  // brief peek time (ms) — decreases
+  const peek = Math.max(500, 1200 - (lv-1)*80);
+  return {pairs, time, peek};
+}
+
+/* ── STATE ── */
+let level=1, score=0, combo=1, maxCombo=1, timeLeft=30;
+let flipped=[], matched=new Set(), cards=[], canFlip=true;
+let timerInt=null, peekTimeout=null;
+const cfg=()=>getLevelConfig(level);
+
+function buildDeck(pairs){
+  const pool=[...ALL_EMOJIS].sort(()=>Math.random()-.5).slice(0,pairs);
+  const deck=[...pool,...pool].sort(()=>Math.random()-.5);
+  return deck;
+}
+
+function getGridCols(total){
+  if(total<=8) return 4;
+  if(total<=12) return 4;
+  if(total<=16) return 4;
+  return 4;
+}
+
+function startGame(){
+  document.getElementById('start-screen').style.display='none';
+  level=1; score=0;
+  document.getElementById('score-v').textContent='0';
+  startLevel();
+}
+
+function startLevel(){
+  document.getElementById('fail-screen').style.display='none';
+  document.getElementById('win-screen').style.display='none';
+  const c=cfg();
+  flipped=[]; matched=new Set(); combo=1; maxCombo=1; canFlip=false;
+  timeLeft=c.time;
+
+  document.getElementById('level-v').textContent=level;
+  document.getElementById('combo-v').textContent='×1';
+  document.getElementById('level-label').textContent=`LEVEL ${level} — FIND ${c.pairs} PAIRS`;
+
+  cards=buildDeck(c.pairs);
+  const cols=getGridCols(cards.length);
+  const grid=document.getElementById('grid');
+  grid.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+  grid.innerHTML='';
+
+  cards.forEach((emoji,i)=>{
+    const card=document.createElement('div');
+    card.className='card flipped'; // start showing face
+    card.style.animationDelay=(i*.03)+'s';
+    card.innerHTML=`<div class="card-front"></div><div class="card-back">${emoji}</div>`;
+    card.addEventListener('click',()=>flipCard(i));
+    card.addEventListener('touchstart',e=>{e.preventDefault();flipCard(i);},{passive:false});
+    grid.appendChild(card);
+  });
+
+  updatePairs();
+  updateTimer();
+
+  // Peek: show all then hide after peek time
+  peekTimeout=setTimeout(()=>{
+    hideAllCards();
+    canFlip=true;
+    clearInterval(timerInt);
+    timerInt=setInterval(()=>{
+      timeLeft=Math.max(0,timeLeft-.1);
+      updateTimer();
+      if(timeLeft<=0){clearInterval(timerInt);timesUp();}
+    },100);
+  }, c.peek);
+}
+
+function hideAllCards(){
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('flipped'));
+}
+
+function updateTimer(){
+  const c=cfg();
+  const pct=(timeLeft/c.time)*100;
+  document.getElementById('timer-fill').style.width=pct+'%';
+  document.getElementById('timer-fill').style.background=
+    pct>50?'linear-gradient(90deg,#2B86C5,#FF3CAC)':
+    pct>25?'linear-gradient(90deg,#FFD700,#FF8C00)':
+    'linear-gradient(90deg,#EF4444,#FF0000)';
+}
+
+function updatePairs(){
+  const c=cfg();
+  const done=matched.size/2;
+  document.getElementById('pairs-v').textContent=`${done}/${c.pairs}`;
+}
+
+function flipCard(idx){
+  if(!canFlip) return;
+  if(matched.has(idx)) return;
+  if(flipped.includes(idx)) return;
+  if(flipped.length>=2) return;
+
+  const cardEls=document.querySelectorAll('.card');
+  cardEls[idx].classList.add('flipped');
+  flipped.push(idx);
+
+  if(flipped.length===2) checkMatch();
+}
+
+function checkMatch(){
+  canFlip=false;
+  const [a,b]=flipped;
+  const cardEls=document.querySelectorAll('.card');
+
+  if(cards[a]===cards[b]){
+    // Match!
+    matched.add(a); matched.add(b);
+    cardEls[a].classList.add('matched');
+    cardEls[b].classList.add('matched');
+    const pts=100*combo;
+    score+=pts;
+    combo=Math.min(combo+1,8);
+    maxCombo=Math.max(maxCombo,combo);
+    document.getElementById('score-v').textContent=score;
+    document.getElementById('combo-v').textContent='×'+combo;
+    showFx('+'+pts+(combo>2?' 🔥':''),'#FF3CAC');
+    flipped=[];
+    canFlip=true;
+    updatePairs();
+    if(matched.size===cards.length) setTimeout(levelWin,400);
+  } else {
+    // No match
+    combo=1;
+    document.getElementById('combo-v').textContent='×1';
+    cardEls[a].classList.add('shake');
+    cardEls[b].classList.add('shake');
+    setTimeout(()=>{
+      cardEls[a].classList.remove('flipped','shake');
+      cardEls[b].classList.remove('flipped','shake');
+      flipped=[];
+      canFlip=true;
+    },700);
+  }
+}
+
+function levelWin(){
+  clearInterval(timerInt);
+  const bonus=Math.round(timeLeft*10);
+  score+=bonus;
+  document.getElementById('score-v').textContent=score;
+  const stars=timeLeft>cfg().time*.6?'⭐⭐⭐':timeLeft>cfg().time*.3?'⭐⭐':'⭐';
+  document.getElementById('win-stars').textContent=stars;
+  document.getElementById('win-score').textContent=score;
+  document.getElementById('wlv').textContent=level;
+  document.getElementById('wtime').textContent=timeLeft.toFixed(1)+'s';
+  document.getElementById('wmax').textContent='×'+maxCombo;
+  document.getElementById('win-screen').style.display='flex';
+}
+
+function timesUp(){
+  canFlip=false;
+  document.getElementById('fail-score').textContent=score;
+  document.getElementById('fail-pairs').textContent=matched.size/2;
+  document.getElementById('fail-screen').style.display='flex';
+}
+
+function nextLevel(){
+  level++;
+  document.getElementById('win-screen').style.display='none';
+  startLevel();
+}
+
+function goMenu(){
+  clearInterval(timerInt);
+  document.getElementById('win-screen').style.display='none';
+  document.getElementById('fail-screen').style.display='none';
+  document.getElementById('start-screen').style.display='flex';
+}
+
+function showFx(text,color){
+  const el=document.createElement('div');
+  el.className='fx';
+  el.style.cssText=`left:50%;top:45%;color:${color};`;
+  el.textContent=text;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),700);
+}
+</script>
+</body>
+</html>

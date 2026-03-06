@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Dodge Dash</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nunito:wght@700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
+body{min-height:100vh;background:#0D0D1A;overflow:hidden;font-family:'Nunito',sans-serif;color:white;touch-action:none;}
+canvas{position:fixed;top:0;left:0;}
+
+/* UI LAYER over canvas */
+#ui{position:fixed;inset:0;pointer-events:none;z-index:10;}
+#hud{padding:12px 18px;display:flex;justify-content:space-between;align-items:center;}
+.stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:7px 14px;font-family:'Black Han Sans';font-size:1.1rem;}
+#dist-v{color:#A78BFA;}
+#score-v{color:#34D399;}
+
+/* LEFT RIGHT TAP ZONES */
+#left-zone,#right-zone{position:fixed;top:70px;bottom:0;width:50%;z-index:20;opacity:0;transition:opacity .1s;}
+#left-zone{left:0;background:linear-gradient(90deg,rgba(167,139,250,.15),transparent);}
+#right-zone{right:0;background:linear-gradient(270deg,rgba(52,211,153,.15),transparent);}
+#left-zone.pressed{opacity:1;}
+#right-zone.pressed{opacity:1;}
+
+/* ARROW HINTS */
+#arrow-hints{position:fixed;bottom:40px;left:0;right:0;display:flex;justify-content:space-between;padding:0 30px;pointer-events:none;z-index:15;opacity:.3;}
+.arrow-hint{font-size:2.5rem;animation:arrowBounce 1.5s ease-in-out infinite alternate;}
+.arrow-hint.right{animation-delay:.3s;}
+
+/* SCREENS */
+.screen{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;}
+#start-screen{background:radial-gradient(ellipse at 50% 40%,#2D1B69,#0D0D1A);}
+#end-screen{background:radial-gradient(ellipse at 50% 40%,#1A2D1B,#0D0D1A);}
+.title{font-family:'Black Han Sans';font-size:3.5rem;background:linear-gradient(135deg,#A78BFA,#34D399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;text-align:center;}
+.sub{font-size:.7rem;color:rgba(255,255,255,.3);letter-spacing:4px;text-transform:uppercase;margin:4px 0 24px;}
+.info-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px 22px;margin-bottom:24px;max-width:300px;font-size:.9rem;color:rgba(255,255,255,.6);line-height:1.9;text-align:center;}
+.play-btn{background:linear-gradient(135deg,#A78BFA,#7C3AED);color:white;border:none;border-radius:14px;padding:16px 52px;font-family:'Black Han Sans';font-size:1.2rem;cursor:pointer;letter-spacing:2px;box-shadow:0 6px 20px rgba(167,139,250,.4);}
+.play-btn:active{transform:scale(.95);}
+.play-btn.green{background:linear-gradient(135deg,#34D399,#059669);box-shadow:0 6px 20px rgba(52,211,153,.4);}
+.final-dist{font-family:'Black Han Sans';font-size:5rem;background:linear-gradient(135deg,#A78BFA,#34D399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:6px 0;}
+.stats-row{display:flex;gap:12px;margin:10px 0 20px;width:100%;}
+.stat-box{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 6px;text-align:center;}
+.stat-v{font-family:'Black Han Sans';font-size:1.4rem;color:white;}
+.stat-l{font-size:.55rem;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+
+@keyframes arrowBounce{from{transform:translateX(0);}to{transform:translateX(-8px);}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="ui">
+  <div id="hud">
+    <div class="stat">📏 <span id="dist-v">0</span>m</div>
+    <div class="stat">⭐ <span id="score-v">0</span></div>
+  </div>
+</div>
+
+<div id="left-zone" id="lz"></div>
+<div id="right-zone" id="rz"></div>
+
+<div id="arrow-hints">
+  <div class="arrow-hint">◀ TAP LEFT</div>
+  <div class="arrow-hint right">TAP RIGHT ▶</div>
+</div>
+
+<div class="screen" id="start-screen">
+  <div style="font-size:4rem;margin-bottom:10px">🏃</div>
+  <div class="title">DODGE DASH</div>
+  <div class="sub">How far can you run?</div>
+  <div class="info-card">
+    ⬅️ <b>Tap LEFT side</b> to move left<br>
+    ➡️ <b>Tap RIGHT side</b> to move right<br>
+    💎 Collect gems for bonus points<br>
+    💀 Avoid the falling obstacles!
+  </div>
+  <button class="play-btn" onclick="startGame()">RUN! 🏃</button>
+</div>
+
+<div class="screen" id="end-screen" style="display:none">
+  <div style="font-size:3.5rem;margin-bottom:6px" id="end-emoji">💥</div>
+  <div class="title" style="font-size:2.5rem">CRASHED!</div>
+  <div class="final-dist" id="end-dist">0</div>
+  <p style="color:rgba(255,255,255,.3);font-size:.75rem;margin-bottom:10px;letter-spacing:2px">METERS RUN</p>
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-v" id="end-score">0</div><div class="stat-l">Score</div></div>
+    <div class="stat-box"><div class="stat-v" id="end-gems">0</div><div class="stat-l">Gems</div></div>
+    <div class="stat-box"><div class="stat-v" id="end-best">0</div><div class="stat-l">Best</div></div>
+  </div>
+  <button class="play-btn" onclick="startGame()">RUN AGAIN 🏃</button>
+</div>
+
+<script>
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+let W=canvas.width=window.innerWidth;
+let H=canvas.height=window.innerHeight;
+
+// LANES
+const LANE_COUNT=5;
+let laneW=W/LANE_COUNT;
+let lanes=Array.from({length:LANE_COUNT},(_,i)=>i*laneW+laneW/2);
+
+// STATE
+let player={lane:2,x:lanes[2],y:H*0.75,w:36,h:36,vx:0,targetX:lanes[2]};
+let obstacles=[],gems=[],score=0,distance=0,gameSpeed=3,active=false;
+let gems_count=0,frameN=0,bestDist=0;
+let goLeft=false,goRight=false;
+let trail=[];
+
+// COLORS
+const COLORS=['#FF6B6B','#FF8C42','#FFD166','#A78BFA','#74B9FF'];
+const OBS_EMOJIS=['🧱','🪨','💣','🌵','⚡','🔩','🪵'];
+const GEM_EMOJI='💎';
+
+// Input
+const lz=document.getElementById('left-zone');
+const rz=document.getElementById('right-zone');
+lz.addEventListener('touchstart',e=>{e.preventDefault();movePlayer(-1);lz.classList.add('pressed');},{passive:false});
+lz.addEventListener('touchend',()=>lz.classList.remove('pressed'));
+rz.addEventListener('touchstart',e=>{e.preventDefault();movePlayer(1);rz.classList.add('pressed');},{passive:false});
+rz.addEventListener('touchend',()=>rz.classList.remove('pressed'));
+lz.addEventListener('mousedown',()=>{movePlayer(-1);lz.classList.add('pressed');});
+rz.addEventListener('mousedown',()=>{movePlayer(1);rz.classList.add('pressed');});
+document.addEventListener('mouseup',()=>{lz.classList.remove('pressed');rz.classList.remove('pressed');});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft'||e.key==='a') movePlayer(-1);
+  if(e.key==='ArrowRight'||e.key==='d') movePlayer(1);
+});
+
+function movePlayer(dir){
+  if(!active) return;
+  const newLane=Math.max(0,Math.min(LANE_COUNT-1,player.lane+dir));
+  player.lane=newLane;
+  player.targetX=lanes[newLane];
+}
+
+function spawnObstacle(){
+  const lane=Math.floor(Math.random()*LANE_COUNT);
+  const emoji=OBS_EMOJIS[Math.floor(Math.random()*OBS_EMOJIS.length)];
+  obstacles.push({x:lanes[lane],y:-40,lane,emoji,size:38,speed:gameSpeed});
+}
+
+function spawnGem(){
+  const lane=Math.floor(Math.random()*LANE_COUNT);
+  gems.push({x:lanes[lane],y:-30,lane,size:28});
+}
+
+let raf;
+function loop(){
+  if(!active) return;
+  frameN++;
+  distance+=gameSpeed*0.05;
+  gameSpeed=Math.min(12,3+distance*0.02);
+  score=Math.floor(distance*10);
+  document.getElementById('dist-v').textContent=Math.floor(distance);
+  document.getElementById('score-v').textContent=score+gems_count*50;
+
+  // Smooth player move
+  player.x+=(player.targetX-player.x)*0.2;
+
+  // Trail
+  trail.unshift({x:player.x,y:player.y});
+  if(trail.length>15) trail.pop();
+
+  // Spawn
+  const spawnRate=Math.max(18,55-Math.floor(gameSpeed*4));
+  if(frameN%spawnRate===0) spawnObstacle();
+  if(frameN%70===0&&Math.random()<0.5) spawnGem();
+
+  // Move obstacles
+  obstacles.forEach(o=>o.y+=o.speed+(gameSpeed-3)*0.3);
+  gems.forEach(g=>g.y+=gameSpeed*0.7);
+  obstacles=obstacles.filter(o=>o.y<H+50);
+  gems=gems.filter(g=>g.y<H+30);
+
+  // Collision
+  obstacles.forEach(o=>{
+    const dx=Math.abs(player.x-o.x), dy=Math.abs(player.y-o.y);
+    if(dx<(player.w/2+o.size/2-8)&&dy<(player.h/2+o.size/2-8)){
+      active=false; endGame(); return;
+    }
+  });
+
+  // Gem collection
+  gems=gems.filter(g=>{
+    const dx=Math.abs(player.x-g.x), dy=Math.abs(player.y-g.y);
+    if(dx<30&&dy<30){gems_count++;return false;}
+    return true;
+  });
+
+  draw();
+  raf=requestAnimationFrame(loop);
+}
+
+function draw(){
+  // Background
+  ctx.fillStyle='#0D0D1A';
+  ctx.fillRect(0,0,W,H);
+
+  // Road lanes
+  for(let i=0;i<LANE_COUNT;i++){
+    const x=i*laneW;
+    ctx.fillStyle=i%2===0?'rgba(255,255,255,.02)':'rgba(255,255,255,.015)';
+    ctx.fillRect(x,0,laneW,H);
+  }
+
+  // Lane dividers (scrolling dashes)
+  ctx.strokeStyle='rgba(255,255,255,.08)';
+  ctx.lineWidth=2;
+  ctx.setLineDash([30,20]);
+  ctx.lineDashOffset=-(frameN*gameSpeed*0.5)%50;
+  for(let i=1;i<LANE_COUNT;i++){
+    const x=i*laneW;
+    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // Horizon glow
+  const hg=ctx.createLinearGradient(0,H*.6,0,H);
+  hg.addColorStop(0,'transparent');
+  hg.addColorStop(1,'rgba(124,58,237,.12)');
+  ctx.fillStyle=hg;
+  ctx.fillRect(0,H*.6,W,H*.4);
+
+  // Trail
+  trail.forEach((pt,i)=>{
+    const a=(1-i/trail.length)*0.4;
+    const r=player.w/2*(1-i/trail.length)*0.8;
+    ctx.save();
+    ctx.globalAlpha=a;
+    ctx.shadowColor='#A78BFA';ctx.shadowBlur=10;
+    ctx.fillStyle='#A78BFA';
+    ctx.beginPath();ctx.arc(pt.x,pt.y,r,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  });
+
+  // Obstacles
+  obstacles.forEach(o=>{
+    ctx.font=o.size+'px serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.shadowColor='rgba(255,100,100,.5)';ctx.shadowBlur=10;
+    ctx.fillText(o.emoji,o.x,o.y);
+    ctx.shadowBlur=0;
+  });
+
+  // Gems
+  gems.forEach(g=>{
+    ctx.save();
+    ctx.shadowColor='#34D399';ctx.shadowBlur=14;
+    ctx.font=g.size+'px serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(GEM_EMOJI,g.x,g.y);
+    ctx.restore();
+  });
+
+  // Player (car emoji + glow)
+  ctx.save();
+  ctx.shadowColor='#A78BFA';ctx.shadowBlur=20;
+  ctx.font='36px serif';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('🏎️',player.x,player.y);
+  ctx.restore();
+
+  // Speed indicator
+  const speedPct=(gameSpeed-3)/(12-3);
+  const barW=80;
+  ctx.save();
+  ctx.globalAlpha=0.5;
+  ctx.fillStyle='rgba(255,255,255,.05)';
+  ctx.fillRect(W/2-barW/2,H-24,barW,6);
+  const col=`hsl(${120-speedPct*120},100%,60%)`;
+  ctx.fillStyle=col;
+  ctx.fillRect(W/2-barW/2,H-24,barW*speedPct,6);
+  ctx.fillStyle='rgba(255,255,255,.3)';
+  ctx.font='10px Nunito';ctx.textAlign='center';
+  ctx.fillText('SPEED',W/2,H-10);
+  ctx.restore();
+}
+
+function startGame(){
+  document.getElementById('start-screen').style.display='none';
+  document.getElementById('end-screen').style.display='none';
+  document.getElementById('arrow-hints').style.display='flex';
+  player={lane:2,x:lanes[2],y:H*0.75,w:36,h:36,targetX:lanes[2]};
+  obstacles=[];gems=[];trail=[];score=0;distance=0;gameSpeed=3;gems_count=0;frameN=0;active=true;
+  document.getElementById('dist-v').textContent='0';
+  document.getElementById('score-v').textContent='0';
+  if(raf) cancelAnimationFrame(raf);
+  loop();
+
+  // Hide hints after 3s
+  setTimeout(()=>document.getElementById('arrow-hints').style.opacity='0',3000);
+}
+
+function endGame(){
+  const dist=Math.floor(distance);
+  bestDist=Math.max(bestDist,dist);
+  const total=score+gems_count*50;
+  const emojis=['💥','😤','😬','😱','🤯'];
+  document.getElementById('end-emoji').textContent=emojis[Math.min(Math.floor(dist/50),4)];
+  document.getElementById('end-dist').textContent=dist;
+  document.getElementById('end-score').textContent=total;
+  document.getElementById('end-gems').textContent=gems_count;
+  document.getElementById('end-best').textContent=bestDist+'m';
+  document.getElementById('end-screen').style.display='flex';
+  document.getElementById('arrow-hints').style.opacity='.3';
+  document.getElementById('arrow-hints').style.display='flex';
+}
+
+window.addEventListener('resize',()=>{
+  W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;
+  laneW=W/LANE_COUNT;
+  lanes=Array.from({length:LANE_COUNT},(_,i)=>i*laneW+laneW/2);
+  player.y=H*0.75;
+});
+</script>
+</body>
+</html>

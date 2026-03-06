@@ -26,7 +26,8 @@
         }
         .stat { color: #aaa; font-size: 11px; text-align: center; line-height: 1.3; }
         .stat span { color: #ffd700; font-size: 17px; font-weight: bold; display: block; }
-        #gameCanvas { display: block; max-width: 480px; width: 100%; flex-shrink: 0; }
+        #levelBadge { background:#ffd70022; border:1px solid #ffd700; border-radius:6px; padding:2px 8px; color:#ffd700; font-size:13px; font-weight:bold; }
+        #gameCanvas { display: block; max-width: 480px; width: 100%; flex-shrink: 0; cursor: pointer; }
         #bottomBar {
             width: 100%; max-width: 480px;
             background: rgba(0,0,0,0.92);
@@ -57,64 +58,95 @@
         }
         #waveBtn.ready { background: #22cc22; box-shadow: 0 0 10px rgba(34,204,34,0.4); }
         #waveBtn:active { transform: scale(0.95); }
+
+        /* OVERLAY */
         #overlay {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(5,5,15,0.98);
+            position: fixed; inset: 0; z-index: 200;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.82);
+        }
+        #overlay.hidden { display: none; }
+        #overlayBox {
+            background: rgba(5,5,15,0.99);
             border-radius: 16px; padding: 28px 32px;
-            text-align: center; z-index: 200;
+            text-align: center;
             border: 2px solid #ffd700;
             box-shadow: 0 0 50px rgba(255,215,0,0.25);
             min-width: 270px; max-width: 340px;
         }
-        #overlay h1 { font-size: 30px; margin-bottom: 10px; }
-        #overlay p { color: #999; font-size: 13px; margin: 5px 0; line-height: 1.5; }
-        #overlay button {
-            margin-top: 16px; padding: 11px 34px;
+        #overlayBox h1 { font-size: 28px; margin-bottom: 10px; }
+        #overlayBox p { color: #999; font-size: 13px; margin: 5px 0; line-height: 1.6; }
+        #overlayBox .ov-btn {
+            display: inline-block; margin-top: 12px; padding: 11px 34px;
             background: #ffd700; color: #000;
-            border: none; font-size: 17px; font-weight: bold;
-            border-radius: 8px; cursor: pointer;
+            border: none; font-size: 16px; font-weight: bold;
+            border-radius: 8px; cursor: pointer; width: 100%;
         }
+        #overlayBox .ov-btn:active { transform: scale(0.96); }
+        #overlayBox .ov-btn.secondary {
+            background: transparent; color: #aaa;
+            border: 1px solid #444; font-size: 13px;
+            padding: 8px 20px; margin-top: 8px;
+        }
+
         #floatContainer {
             position: absolute; top: 0; left: 50%; transform: translateX(-50%);
             width: 100%; max-width: 480px; height: 100%;
             pointer-events: none; z-index: 50;
         }
+
+        /* LEVEL CLEAR BANNER */
+        #levelBanner {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            z-index: 150; pointer-events: none;
+            font-family: 'Courier New', monospace; font-size: 2rem; font-weight: bold;
+            color: #ffd700; text-shadow: 0 0 20px #ffd700;
+            opacity: 0; transition: opacity 0.3s;
+        }
     </style>
 </head>
 <body>
 <div id="topBar">
-    <div class="stat">❤️ LIVES<span id="livesDisp">20</span></div>
-    <div class="stat">💰 GOLD<span id="goldDisp">150</span></div>
-    <div class="stat">🌊 WAVE<span id="waveDisp">0/10</span></div>
-    <div class="stat">💀 KILLS<span id="killDisp">0</span></div>
+    <div class="stat">❤️<span id="livesDisp">20</span></div>
+    <div class="stat">💰<span id="goldDisp">150</span></div>
+    <div id="levelBadge">LV <span id="levelDisp">1</span></div>
+    <div class="stat">🌊<span id="waveDisp">0/10</span></div>
+    <div class="stat">💀<span id="killDisp">0</span></div>
 </div>
 
 <canvas id="gameCanvas"></canvas>
 <div id="floatContainer"></div>
+<div id="levelBanner" id="lvBanner"></div>
 
 <div id="bottomBar">
     <button class="tower-btn active" id="btn-gun"    onclick="selectTower('gun')">
         <span class="t-icon">🔫</span>GUN<br><span class="t-cost">💰50</span>
     </button>
-    <button class="tower-btn"        id="btn-laser"  onclick="selectTower('laser')">
+    <button class="tower-btn" id="btn-laser" onclick="selectTower('laser')">
         <span class="t-icon">⚡</span>RAPID<br><span class="t-cost">💰80</span>
     </button>
-    <button class="tower-btn"        id="btn-freeze" onclick="selectTower('freeze')">
+    <button class="tower-btn" id="btn-freeze" onclick="selectTower('freeze')">
         <span class="t-icon">❄️</span>SLOW<br><span class="t-cost">💰100</span>
     </button>
-    <button class="tower-btn"        id="btn-bomb"   onclick="selectTower('bomb')">
+    <button class="tower-btn" id="btn-bomb" onclick="selectTower('bomb')">
         <span class="t-icon">💣</span>BOMB<br><span class="t-cost">💰130</span>
     </button>
     <button id="waveBtn" class="ready" onclick="startWave()">▶ SEND</button>
 </div>
 
+<!-- OVERLAY (start / level clear / game over) -->
 <div id="overlay">
-    <h1 style="color:#ffd700">🏰 TOWER DEFENSE</h1>
-    <p style="color:#ddd;font-size:14px">Tap any tile to place a tower.<br>Stop enemies reaching END!</p>
-    <p>🔫 Gun — steady damage<br>⚡ Rapid — fast fire rate<br>❄️ Slow — freezes enemies<br>💣 Bomb — area splash</p>
-    <p style="color:#ffd700;margin-top:8px">Kill enemies to earn more 💰!</p>
-    <button onclick="closeOverlay()">START GAME</button>
+    <div id="overlayBox">
+        <h1 id="ovTitle" style="color:#ffd700">🏰 TOWER DEFENSE</h1>
+        <div id="ovBody">
+            <p style="color:#ddd;font-size:14px">Tap tiles to place towers.<br>Stop enemies reaching END!</p>
+            <p>🔫 Gun — steady dmg &nbsp; ⚡ Rapid — fast fire<br>❄️ Slow — freezes &nbsp; 💣 Bomb — splash</p>
+            <p style="color:#ffd700;margin-top:6px">Kill enemies to earn 💰 gold!</p>
+        </div>
+        <button class="ov-btn" id="ovMainBtn" onclick="handleOverlayBtn()">▶ START GAME</button>
+        <br>
+        <button class="ov-btn secondary" id="ovSecBtn" style="display:none" onclick="handleSecBtn()">↩ MENU</button>
+    </div>
 </div>
 
 <script>
@@ -122,7 +154,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx    = canvas.getContext('2d');
 
 canvas.width  = Math.min(window.innerWidth, 480);
-canvas.height = window.innerHeight - 114; // topBar~50 + bottomBar~64
+canvas.height = window.innerHeight - 114;
 
 const COLS = 10;
 const CELL = Math.floor(canvas.width / COLS);
@@ -131,22 +163,28 @@ canvas.width  = COLS * CELL;
 canvas.height = ROWS * CELL;
 
 // ── AUDIO ──
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let audioCtx;
+function getAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+}
 function beep(freq, dur, type, vol) {
     try {
-        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-        o.connect(g); g.connect(audioCtx.destination);
-        o.type = type || 'square'; o.frequency.value = freq;
-        const now = audioCtx.currentTime;
-        g.gain.setValueAtTime(vol || 0.05, now);
-        g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-        o.start(now); o.stop(now + dur + 0.01);
+        const ac = getAudio();
+        const o = ac.createOscillator(), g = ac.createGain();
+        o.connect(g); g.connect(ac.destination);
+        o.type = type||'square'; o.frequency.value = freq;
+        const now = ac.currentTime;
+        g.gain.setValueAtTime(vol||0.05, now);
+        g.gain.exponentialRampToValueAtTime(0.0001, now+dur);
+        o.start(now); o.stop(now+dur+0.01);
     } catch(e) {}
 }
 function sfxShot(t)  { if(t==='gun') beep(700,0.06,'square',0.04); else if(t==='laser') beep(1200,0.04,'sine',0.04); else if(t==='freeze') beep(900,0.08,'sine',0.03); else beep(200,0.12,'sawtooth',0.06); }
 function sfxKill()   { beep(440,0.05,'square',0.06); setTimeout(()=>beep(660,0.08,'square',0.05),60); }
 function sfxLeak()   { beep(150,0.25,'sawtooth',0.08); }
 function sfxWave()   { [523,659,784].forEach((f,i)=>setTimeout(()=>beep(f,0.15,'sine',0.08),i*80)); }
+function sfxLevelUp(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.18,'sine',0.1),i*100)); }
 
 // ── PATH ──
 function buildPath() {
@@ -155,51 +193,90 @@ function buildPath() {
     const add = (r,c) => { visited.add(r+','+c); path.push({r,c}); };
     let r = Math.floor(ROWS/2), c = 0;
     add(r,c);
-    while (c < COLS-1) {
+    let tries = 0;
+    while (c < COLS-1 && tries < 2000) {
+        tries++;
         const roll = Math.random();
-        if (roll < 0.60 && c < COLS-1 && !visited.has(r+','+(c+1))) {
+        if (roll < 0.62 && !visited.has(r+','+(c+1))) {
             c++; add(r,c);
-        } else if (roll < 0.80 && r < ROWS-2 && !visited.has((r+1)+','+c)) {
+        } else if (roll < 0.81 && r < ROWS-2 && !visited.has((r+1)+','+c)) {
             r++; add(r,c);
         } else if (r > 1 && !visited.has((r-1)+','+c)) {
             r--; add(r,c);
-        } else {
-            c++; add(r,c); // force right if stuck
+        } else if (!visited.has(r+','+(c+1))) {
+            c++; add(r,c);
         }
     }
+    // ensure we reach last column
+    while (c < COLS-1) { c++; add(r,c); }
     return path;
 }
-const path    = buildPath();
-const pathSet = new Set(path.map(p=>p.r+','+p.c));
 
 // ── TOWER DEFS ──
-// fireInterval in ms, damage in hp, bulletSpeed in px/frame
 const DEFS = {
-    gun:    { cost:50,  color:'#44aaff', range:2.8, damage:10, fireInterval:650,  splash:0,       bulletSpeed:6,   slows:false, icon:'🔫' },
-    laser:  { cost:80,  color:'#ff44ff', range:2.5, damage:6,  fireInterval:260,  splash:0,       bulletSpeed:9,   slows:false, icon:'⚡' },
-    freeze: { cost:100, color:'#88eeff', range:2.5, damage:2,  fireInterval:850,  splash:0,       bulletSpeed:5,   slows:true,  icon:'❄️' },
-    bomb:   { cost:130, color:'#ffaa44', range:2.2, damage:22, fireInterval:1300, splash:1.4,     bulletSpeed:4,   slows:false, icon:'💣' },
+    gun:    { cost:50,  color:'#44aaff', range:2.8, damage:10, fireInterval:650,  splash:0,   bulletSpeed:6, slows:false, icon:'🔫' },
+    laser:  { cost:80,  color:'#ff44ff', range:2.5, damage:6,  fireInterval:260,  splash:0,   bulletSpeed:9, slows:false, icon:'⚡' },
+    freeze: { cost:100, color:'#88eeff', range:2.5, damage:2,  fireInterval:850,  splash:0,   bulletSpeed:5, slows:true,  icon:'❄️' },
+    bomb:   { cost:130, color:'#ffaa44', range:2.2, damage:22, fireInterval:1300, splash:1.4, bulletSpeed:4, slows:false, icon:'💣' },
 };
 
-// ── STATE ──
+// ── GAME STATE ──
+let path, pathSet;
 let towers=[], enemies=[], bullets=[], particles=[];
 let selectedType='gun', gold=150, lives=20, waveNum=0, kills=0;
-let gameRunning=false, waveActive=false;
+let gameLevel=1, totalKills=0, totalWaves=0;
+let gameRunning=false, waveActive=false, transitioning=false;
 let enemiesToSpawn=0, spawnCD=0;
-let lastTs=0;
+let lastTs=0, rafId=null;
+
+// Overlay state: 'start' | 'levelclear' | 'gameover' | 'victory'
+let overlayState = 'start';
+
+// ── LEVEL SCALING ──
+// Each level: harder enemies, more waves, new path
+const WAVES_PER_LEVEL = 10;
+function enemyScale(wv) {
+    // wv = absolute wave number across all levels
+    const baseHp    = 12 + wv * 14 + (gameLevel-1) * 40;
+    const baseSpeed = 0.55 + wv * 0.06 + (gameLevel-1) * 0.1;
+    const bounty    = 20 + wv * 8;
+    return { hp: Math.round(baseHp), speed: Math.min(baseSpeed, 3.5), bounty };
+}
+
+// ── INIT LEVEL ──
+function initLevel(keepGold) {
+    // Build fresh path
+    path    = buildPath();
+    pathSet = new Set(path.map(p=>p.r+','+p.c));
+
+    // Reset wave state but keep gold if continuing
+    towers=[]; enemies=[]; bullets=[]; particles=[];
+    waveNum=0; waveActive=false; enemiesToSpawn=0; spawnCD=0;
+    lives = Math.min(20, 15 + gameLevel); // slightly more lives on higher levels
+    if (!keepGold) gold = 150;
+    // Bonus gold for new level
+    if (keepGold) { gold += 80 + gameLevel*30; }
+
+    selectedType = 'gun';
+    document.querySelectorAll('.tower-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('btn-gun').classList.add('active');
+
+    updateUI();
+}
 
 // ── UI ──
 function selectTower(t) {
     selectedType = t;
     document.querySelectorAll('.tower-btn').forEach(b=>b.classList.remove('active'));
     document.getElementById('btn-'+t).classList.add('active');
-    if (audioCtx.state==='suspended') audioCtx.resume();
+    try { getAudio().resume(); } catch(e) {}
 }
 function updateUI() {
     document.getElementById('goldDisp').textContent  = gold;
     document.getElementById('livesDisp').textContent = lives;
     document.getElementById('killDisp').textContent  = kills;
-    document.getElementById('waveDisp').textContent  = waveNum+'/10';
+    document.getElementById('waveDisp').textContent  = waveNum+'/'+WAVES_PER_LEVEL;
+    document.getElementById('levelDisp').textContent = gameLevel;
     document.querySelectorAll('.tower-btn').forEach(b=>{
         const t=b.id.replace('btn-','');
         b.classList.toggle('cant-afford', gold < DEFS[t].cost);
@@ -208,10 +285,9 @@ function updateUI() {
 function floatLabel(x, y, txt, color) {
     const el = document.createElement('div');
     el.textContent = txt;
-    const canRect = canvas.getBoundingClientRect();
-    const barTop  = document.getElementById('topBar').getBoundingClientRect().height;
+    const barTop = document.getElementById('topBar').getBoundingClientRect().height;
     el.style.cssText = `position:absolute;left:${x}px;top:${y+barTop}px;color:${color};
-        font-size:12px;font-weight:bold;font-family:Courier New,monospace;
+        font-size:12px;font-weight:bold;font-family:'Courier New',monospace;
         pointer-events:none;white-space:nowrap;
         text-shadow:0 0 5px ${color};
         transition:transform 0.75s ease-out,opacity 0.75s ease-out;`;
@@ -223,18 +299,107 @@ function floatLabel(x, y, txt, color) {
     setTimeout(()=>el.remove(), 800);
 }
 
-function closeOverlay() {
-    document.getElementById('overlay').style.display='none';
-    gameRunning = true;
-    updateUI();
+// ── OVERLAY MANAGEMENT ──
+function showOverlay(state) {
+    overlayState = state;
+    const ov    = document.getElementById('overlay');
+    const title = document.getElementById('ovTitle');
+    const body  = document.getElementById('ovBody');
+    const mainB = document.getElementById('ovMainBtn');
+    const secB  = document.getElementById('ovSecBtn');
+
+    ov.classList.remove('hidden');
+    secB.style.display = 'none';
+
+    if (state === 'start') {
+        title.textContent = '🏰 TOWER DEFENSE';
+        title.style.color = '#ffd700';
+        body.innerHTML = `
+            <p style="color:#ddd;font-size:14px">Tap tiles to place towers.<br>Stop enemies reaching END!</p>
+            <p>🔫 Gun — steady dmg &nbsp;⚡ Rapid — fast fire<br>❄️ Slow — freezes &nbsp;💣 Bomb — splash</p>
+            <p style="color:#ffd700;margin-top:6px">Kill enemies to earn 💰 gold!</p>`;
+        mainB.textContent = '▶ START GAME';
+    } else if (state === 'levelclear') {
+        title.textContent = `✅ LEVEL ${gameLevel-1} CLEAR!`;
+        title.style.color = '#44ff88';
+        body.innerHTML = `
+            <p style="color:#ddd">You survived all 10 waves!</p>
+            <p>💀 Kills this level: <b style="color:#ffd700">${kills}</b></p>
+            <p>💰 Bonus gold awarded!</p>
+            <p style="color:#ffd700;margin-top:6px">Level ${gameLevel}: enemies are faster & stronger!</p>`;
+        mainB.textContent = `▶ PLAY LEVEL ${gameLevel}`;
+        secB.style.display = 'inline-block';
+        secB.textContent = '↩ MAIN MENU';
+    } else if (state === 'gameover') {
+        title.textContent = '💀 DEFEATED';
+        title.style.color = '#ff4444';
+        body.innerHTML = `
+            <p>You reached <b style="color:#ffd700">Level ${gameLevel}</b></p>
+            <p>Waves survived: <b style="color:#ffd700">${totalWaves}</b></p>
+            <p>Total kills: <b style="color:#ffd700">${totalKills + kills}</b></p>`;
+        mainB.textContent = '🔄 PLAY AGAIN';
+        secB.style.display = 'inline-block';
+        secB.textContent = '↩ MAIN MENU';
+    } else if (state === 'victory') {
+        title.textContent = '🏆 ULTIMATE VICTORY!';
+        title.style.color = '#ffd700';
+        body.innerHTML = `
+            <p style="color:#ffd700">You conquered ALL levels!</p>
+            <p>Total kills: <b style="color:#ffd700">${totalKills + kills}</b></p>
+            <p>💰 Final gold: <b style="color:#ffd700">${gold}</b></p>`;
+        mainB.textContent = '🔄 PLAY AGAIN';
+    }
 }
+
+function handleOverlayBtn() {
+    try { getAudio().resume(); } catch(e) {}
+    const ov = document.getElementById('overlay');
+
+    if (overlayState === 'start') {
+        gameLevel=1; totalKills=0; totalWaves=0; kills=0;
+        initLevel(false);
+        ov.classList.add('hidden');
+        gameRunning = true;
+        updateUI();
+    } else if (overlayState === 'levelclear') {
+        // Already incremented gameLevel, just start
+        kills = 0;
+        ov.classList.add('hidden');
+        gameRunning = true;
+        updateUI();
+    } else if (overlayState === 'gameover' || overlayState === 'victory') {
+        // Full restart
+        gameLevel=1; totalKills=0; totalWaves=0; kills=0;
+        initLevel(false);
+        ov.classList.add('hidden');
+        gameRunning = true;
+        updateUI();
+    }
+}
+
+function handleSecBtn() {
+    if (overlayState === 'levelclear') {
+        // Go to main menu — reset everything
+        gameLevel=1; totalKills=0; totalWaves=0; kills=0;
+        initLevel(false);
+        showOverlay('start');
+    } else if (overlayState === 'gameover') {
+        gameLevel=1; totalKills=0; totalWaves=0; kills=0;
+        initLevel(false);
+        showOverlay('start');
+    }
+}
+
+// ── WAVE ──
 function startWave() {
-    if (waveActive || !gameRunning) return;
-    if (audioCtx.state==='suspended') audioCtx.resume();
+    if (waveActive || !gameRunning || transitioning) return;
+    try { getAudio().resume(); } catch(e) {}
     waveNum++;
-    waveActive       = true;
-    enemiesToSpawn   = 5 + waveNum*4;
-    spawnCD          = 200;
+    totalWaves++;
+    waveActive = true;
+    // Scale enemies: more per wave, harder each level
+    enemiesToSpawn = 5 + waveNum*3 + (gameLevel-1)*4;
+    spawnCD = 200;
     document.getElementById('waveBtn').classList.remove('ready');
     document.getElementById('waveBtn').textContent = '⏳';
     updateUI();
@@ -257,17 +422,15 @@ function placeTower(row, col) {
 
 // ── SPAWN ENEMY ──
 function spawnEnemy() {
-    const hp     = Math.round(12 + waveNum*14);
-    const speed  = 0.55 + waveNum*0.06; // px per ms
-    const bounty = 20 + waveNum*8;      // gold reward increases every wave
+    const sc = enemyScale(waveNum + (gameLevel-1)*WAVES_PER_LEVEL);
     enemies.push({
         x: path[0].c*CELL+CELL/2,
         y: path[0].r*CELL+CELL/2,
-        pathIdx:0, hp, maxHp:hp,
-        speed, slowTimer:0,
+        pathIdx:0, hp:sc.hp, maxHp:sc.hp,
+        speed:sc.speed, slowTimer:0,
         r: CELL*0.25,
-        color:'hsl('+(waveNum*36)+',80%,55%)',
-        bounty, dead:false,
+        color:'hsl('+(((waveNum + gameLevel*37)*47)%360)+',80%,55%)',
+        bounty:sc.bounty, dead:false,
         id: Math.random()
     });
 }
@@ -284,7 +447,7 @@ function damageEnemy(e, dmg) {
 }
 function killEnemy(e) {
     if (e.dead) return;
-    e.dead = true; kills++; gold += e.bounty; updateUI();
+    e.dead=true; kills++; gold+=e.bounty; updateUI();
     floatLabel(e.x-20, e.y-20, '+'+e.bounty+' 💰', '#ffd700');
     sfxKill();
     for (let i=0;i<14;i++) particles.push({
@@ -301,31 +464,58 @@ function spawnExplosion(x,y,splashPx) {
     }
 }
 
-function endGame(won) {
-    gameRunning=false;
-    const ol=document.getElementById('overlay');
-    ol.querySelector('h1').textContent = won?'🏆 VICTORY!':'💀 DEFEATED';
-    ol.querySelector('h1').style.color = won?'#ffd700':'#ff4444';
-    const ps = ol.querySelectorAll('p');
-    ps[0].textContent = `Waves: ${waveNum}/10  |  Kills: ${kills}`;
-    ps[1].textContent = `Gold: ${gold}`;
-    ps[2].textContent=''; ps[3].textContent='';
-    const btn=ol.querySelector('button');
-    btn.textContent='PLAY AGAIN';
-    btn.onclick=()=>location.reload();
-    ol.style.display='block';
+// ── LEVEL CLEAR ──
+function handleLevelClear() {
+    if (transitioning) return;
+    transitioning = true;
+    gameRunning = false;
+    waveActive = false;
+    sfxLevelUp();
+
+    const banner = document.getElementById('levelBanner');
+    const maxLevel = 5; // 5 levels total
+
+    if (gameLevel >= maxLevel) {
+        totalKills += kills;
+        setTimeout(() => {
+            transitioning = false;
+            showOverlay('victory');
+        }, 800);
+        return;
+    }
+
+    // Show flash banner
+    banner.textContent = `✅ LEVEL ${gameLevel} CLEAR!`;
+    banner.style.opacity = '1';
+    setTimeout(() => { banner.style.opacity = '0'; }, 1500);
+
+    totalKills += kills;
+    gameLevel++;
+    initLevel(true); // keep gold + bonus
+
+    setTimeout(() => {
+        transitioning = false;
+        showOverlay('levelclear');
+    }, 1000);
+}
+
+// ── GAME OVER ──
+function handleGameOver() {
+    gameRunning = false;
+    waveActive = false;
+    showOverlay('gameover');
 }
 
 // ── UPDATE ──
 function update(dt) {
-    if (!gameRunning) return;
+    if (!gameRunning || transitioning) return;
 
     // Spawn
     if (waveActive && enemiesToSpawn>0) {
         spawnCD -= dt;
         if (spawnCD<=0) {
             spawnEnemy(); enemiesToSpawn--;
-            spawnCD = Math.max(400, 1000 - waveNum*55);
+            spawnCD = Math.max(250, 900 - waveNum*40 - (gameLevel-1)*30);
         }
     }
 
@@ -337,8 +527,10 @@ function update(dt) {
         const spd = (e.slowTimer>0 ? e.speed*0.35 : e.speed) * dt;
         const ni = e.pathIdx+1;
         if (ni>=path.length) {
-            enemies.splice(i,1); lives=Math.max(0,lives-1); updateUI(); sfxLeak();
-            if (lives<=0) { endGame(false); return; }
+            enemies.splice(i,1);
+            lives = Math.max(0, lives-1);
+            updateUI(); sfxLeak();
+            if (lives<=0) { handleGameOver(); return; }
             continue;
         }
         const wp=path[ni];
@@ -352,16 +544,12 @@ function update(dt) {
     towers.forEach(tw => {
         tw.shotTimer += dt;
         if (tw.shotTimer < tw.fireInterval) return;
-
         const cx=tw.col*CELL+CELL/2, cy=tw.row*CELL+CELL/2;
         const rangeR = tw.range*CELL;
-
-        // Target: enemy furthest along path in range
         let best=null, bestProg=-1;
         enemies.forEach(e => {
             if (e.dead) return;
             if (Math.hypot(e.x-cx, e.y-cy) > rangeR) return;
-            // progress = pathIdx + fraction to next wp
             let prog = e.pathIdx;
             if (e.pathIdx+1 < path.length) {
                 const nw=path[e.pathIdx+1];
@@ -371,16 +559,13 @@ function update(dt) {
             if (prog>bestProg) { bestProg=prog; best=e; }
         });
         if (!best) return;
-
         tw.shotTimer=0;
         tw.angle=Math.atan2(best.y-cy, best.x-cx);
         sfxShot(tw.type);
         bullets.push({
-            x:cx, y:cy,
-            target:best,
+            x:cx, y:cy, target:best,
             speed: tw.bulletSpeed,
-            damage:tw.damage,
-            color:tw.color,
+            damage:tw.damage, color:tw.color,
             type:tw.type,
             splash: tw.splash ? tw.splash*CELL : 0,
             slows:tw.slows,
@@ -389,16 +574,14 @@ function update(dt) {
         });
     });
 
-    // Move bullets — true homing
+    // Move bullets
     for (let i=bullets.length-1; i>=0; i--) {
         const b=bullets[i];
         if (b.dead) { bullets.splice(i,1); continue; }
         const tgt=b.target;
         if (!tgt||tgt.dead||tgt.hp<=0) { bullets.splice(i,1); continue; }
-
         const dx=tgt.x-b.x, dy=tgt.y-b.y, dist=Math.hypot(dx,dy);
         const step=b.speed*dt*0.08;
-
         if (dist <= step+b.r+tgt.r) {
             b.dead=true;
             if (b.splash>0) {
@@ -423,16 +606,20 @@ function update(dt) {
         if (p.life<=0) particles.splice(i,1);
     }
 
-    // Wave done
+    // Wave done?
     if (waveActive && enemiesToSpawn===0 && enemies.length===0) {
         waveActive=false;
-        const bonus=50+waveNum*18;
+        const bonus = 50 + waveNum*18 + (gameLevel-1)*15;
         gold+=bonus; updateUI();
         floatLabel(canvas.width/2-30, 30, '+'+bonus+' 💰 WAVE CLEAR!', '#ffd700');
         document.getElementById('waveBtn').textContent='▶ SEND';
         document.getElementById('waveBtn').classList.add('ready');
         sfxWave();
-        if (waveNum>=10) setTimeout(()=>endGame(true),600);
+
+        // All waves of this level done?
+        if (waveNum >= WAVES_PER_LEVEL) {
+            setTimeout(() => handleLevelClear(), 600);
+        }
     }
 }
 
@@ -449,7 +636,7 @@ function draw() {
         ctx.strokeRect(c*CELL,r*CELL,CELL,CELL);
     }
 
-    // Path highlight + arrows
+    // Path arrows
     path.forEach((p,i)=>{
         ctx.fillStyle='rgba(160,100,20,0.2)';
         ctx.fillRect(p.c*CELL+1,p.r*CELL+1,CELL-2,CELL-2);
@@ -464,7 +651,7 @@ function draw() {
         }
     });
 
-    // IN / END
+    // IN / END labels
     ctx.font=`bold ${CELL*0.3}px Courier New`;
     ctx.textAlign='center'; ctx.textBaseline='middle';
     const sp=path[0], ep=path[path.length-1];
@@ -475,24 +662,19 @@ function draw() {
     towers.forEach(tw=>{
         const cx2=tw.col*CELL+CELL/2, cy2=tw.row*CELL+CELL/2;
         const def=DEFS[tw.type];
-        // Range ring (faint)
         ctx.strokeStyle=def.color+'22'; ctx.lineWidth=1;
         ctx.beginPath(); ctx.arc(cx2,cy2,def.range*CELL,0,Math.PI*2); ctx.stroke();
-        // Base
         ctx.fillStyle='#1e1e2e';
         ctx.beginPath(); ctx.arc(cx2,cy2,CELL*0.42,0,Math.PI*2); ctx.fill();
-        // Glow ring
         ctx.shadowBlur=10; ctx.shadowColor=def.color;
         ctx.strokeStyle=def.color; ctx.lineWidth=2.5;
         ctx.beginPath(); ctx.arc(cx2,cy2,CELL*0.40,0,Math.PI*2); ctx.stroke();
         ctx.shadowBlur=0;
-        // Barrel
         ctx.strokeStyle=def.color+'cc'; ctx.lineWidth=2;
         ctx.beginPath();
         ctx.moveTo(cx2,cy2);
         ctx.lineTo(cx2+Math.cos(tw.angle)*CELL*0.4, cy2+Math.sin(tw.angle)*CELL*0.4);
         ctx.stroke();
-        // Icon
         ctx.font=`${CELL*0.38}px serif`;
         ctx.textAlign='center'; ctx.textBaseline='middle';
         ctx.fillText(def.icon,cx2,cy2);
@@ -501,16 +683,13 @@ function draw() {
     // Enemies
     enemies.forEach(e=>{
         if (e.dead) return;
-        // Shadow
         ctx.fillStyle='rgba(0,0,0,0.3)';
         ctx.beginPath(); ctx.ellipse(e.x,e.y+e.r*0.85,e.r*0.7,e.r*0.25,0,0,Math.PI*2); ctx.fill();
-        // Body
         const slow=e.slowTimer>0;
         ctx.shadowBlur=slow?14:6; ctx.shadowColor=slow?'#88ddff':e.color;
         ctx.fillStyle=slow?'#88ddff':e.color;
         ctx.beginPath(); ctx.arc(e.x,e.y,e.r,0,Math.PI*2); ctx.fill();
         ctx.shadowBlur=0;
-        // Emoji
         ctx.font=`${e.r*1.05}px serif`;
         ctx.textAlign='center'; ctx.textBaseline='middle';
         ctx.fillText('💀',e.x,e.y);
@@ -546,24 +725,26 @@ function loop(ts) {
     lastTs=ts;
     update(dt);
     draw();
-    requestAnimationFrame(loop);
+    rafId=requestAnimationFrame(loop);
 }
 
 // ── INPUT ──
 function handleTap(clientX,clientY) {
-    if (!gameRunning) return;
+    if (!gameRunning || transitioning) return;
     const rect=canvas.getBoundingClientRect();
     const x=(clientX-rect.left)*(canvas.width/rect.width);
     const y=(clientY-rect.top)*(canvas.height/rect.height);
     placeTower(Math.floor(y/CELL), Math.floor(x/CELL));
 }
-canvas.addEventListener('click',e=>handleTap(e.clientX,e.clientY));
+canvas.addEventListener('click', e=>handleTap(e.clientX,e.clientY));
 canvas.addEventListener('touchstart',e=>{
     e.preventDefault();
-    if (audioCtx.state==='suspended') audioCtx.resume();
+    try { getAudio().resume(); } catch(e2) {}
     handleTap(e.touches[0].clientX, e.touches[0].clientY);
 },{passive:false});
 
+// ── BOOT ──
+initLevel(false);
 updateUI();
 requestAnimationFrame(loop);
 </script>

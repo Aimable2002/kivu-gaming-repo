@@ -1,4 +1,91 @@
 [
+  
+  { 
+    "id":"number_drops", 
+    "name":"number_drops", 
+    "description":"tap the color of text", 
+    "category":"Strategy", 
+    "difficulty":"Hard", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"🏰", "path":"/mobile-games/number_drops.html" 
+  },
+  { 
+    "id":"emoji_match", 
+    "name":"emoji_match", 
+    "description":"Tap to aim your shot and score target", 
+    "category":"Sports", 
+    "difficulty":"Easy", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"⚽", "path":"/mobile-games/emoji_match.html" 
+  },
+  { 
+    "id":"bug_squi", 
+    "name":"color-tap", 
+    "description":"tap the color of text", 
+    "category":"Strategy", 
+    "difficulty":"Hard", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"🏰", "path":"/mobile-games/bug_squi.html" 
+  },
+  { 
+    "id":"chef", 
+    "name":"chef", 
+    "description":"math game aiming to to teach mathematics", 
+    "category":"Word", 
+    "difficulty":"Medium", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"📝", 
+    "path":"/mobile-games/chef.html" 
+  },
+
+  { 
+    "id":"animal", 
+    "name":"tap-target", 
+    "description":"Tap to aim your shot and score target", 
+    "category":"Sports", 
+    "difficulty":"Easy", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"⚽", "path":"/mobile-games/animal.html" 
+  },
+  { 
+    "id":"bug_squi", 
+    "name":"color-tap", 
+    "description":"tap the color of text", 
+    "category":"Strategy", 
+    "difficulty":"Hard", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"🏰", "path":"/mobile-games/bug_squi.html" 
+  },
+  { 
+    "id":"chef", 
+    "name":"chef", 
+    "description":"math game aiming to to teach mathematics", 
+    "category":"Word", 
+    "difficulty":"Medium", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"📝", 
+    "path":"/mobile-games/chef.html" 
+  },
+
+  { 
+    "id":"cityflip", 
+    "name":"cityflip", 
+    "description":"Tap to aim your shot and score past the goalkeeper", 
+    "category":"Sports", 
+    "difficulty":"Easy", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"⚽", "path":"/mobile-games/cityflip.html" 
+  },
+  { 
+    "id":"doge_dash", 
+    "name":"doge_dash", 
+    "description":"Place towers, spend gold, survive 10 waves of enemies", 
+    "category":"Strategy", 
+    "difficulty":"Hard", 
+    "devices":["mobile","desktop"], 
+    "thumbnail":"🏰", "path":"/mobile-games/doge_dash.html" 
+  },
+
 
   { 
     "id":"tap-target", 

@@ -317,7 +317,7 @@ function answer(val) {
     var pts = 10 + timeBonus + (streak >= 3 ? 10 : 0);
     score += pts;
     scoreEl.textContent = score;
-    feedbackEl.textContent = '✅ +' + pts + (streak >= 3 ? ' 🔥' : '');
+    feedbackEl.textContent = '✅ +' + correctAnswer + (streak >= 3 ? ' 🔥' : '');
     if (streak >= 3) streakEl.textContent = '🔥 Streak x' + streak + '!';
     else streakEl.textContent = '';
   } else {

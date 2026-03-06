@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Chef Chaos!</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
+body{background:#FFF5E4;min-height:100vh;overflow:hidden;font-family:'Nunito',sans-serif;touch-action:manipulation;}
+
+#kitchen-bg{position:fixed;inset:0;background:linear-gradient(180deg,#FFE8C4 0%,#FFF5E4 55%,#EDD5A3 100%);}
+#counter{position:fixed;bottom:0;left:0;right:0;height:38%;background:linear-gradient(180deg,#C8864A,#A0622E);border-top:6px solid #E0A060;}
+#counter::before{content:'';position:absolute;top:0;left:0;right:0;height:14px;background:linear-gradient(180deg,#FFD090,#C8864A);}
+
+/* HUD */
+#hud{position:fixed;top:0;left:0;right:0;z-index:300;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
+.chip{background:white;border-radius:20px;padding:8px 16px;font-size:1.1rem;font-weight:900;box-shadow:0 3px 12px rgba(0,0,0,.13);}
+.chip.score{color:#E8622A;}
+.chip.timer{color:#D63031;}
+.chip.served{color:#00B894;}
+
+/* TICKETS */
+#tickets{position:fixed;top:62px;left:0;right:0;z-index:200;padding:6px 10px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;}
+#tickets::-webkit-scrollbar{display:none;}
+.ticket{background:white;border-radius:16px;padding:10px 14px;flex-shrink:0;border:3px solid #FFD166;box-shadow:0 4px 14px rgba(0,0,0,.09);min-width:110px;position:relative;}
+.ticket.urgent{border-color:#E84393;animation:urgentPulse .7s ease-in-out infinite alternate;}
+.ticket.match{border-color:#00B894;box-shadow:0 0 0 3px rgba(0,184,148,.25);}
+.t-name{font-size:.65rem;font-weight:900;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
+.t-need{display:flex;gap:3px;flex-wrap:wrap;font-size:1.4rem;}
+.t-timer{position:absolute;bottom:0;left:0;height:4px;background:linear-gradient(90deg,#00B894,#FFD166,#E84393);border-radius:0 0 13px 13px;transition:width .5s linear;}
+
+/* PAN */
+#pan-wrap{position:fixed;z-index:150;left:50%;transform:translateX(-50%);bottom:165px;display:flex;flex-direction:column;align-items:center;gap:8px;}
+#pan{width:168px;height:88px;background:radial-gradient(ellipse at 50% 55%,#555,#2A2A2A);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;box-shadow:0 8px 24px rgba(0,0,0,.45),inset 0 -5px 10px rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;position:relative;transition:box-shadow .3s;}
+#pan::after{content:'';position:absolute;right:-50px;top:50%;transform:translateY(-50%);width:52px;height:14px;background:linear-gradient(90deg,#444,#777);border-radius:7px;box-shadow:0 3px 8px rgba(0,0,0,.3);}
+#pan-items{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;font-size:1.5rem;max-width:130px;min-height:30px;align-items:center;}
+#pan-empty-hint{font-size:.65rem;color:rgba(255,255,255,.35);font-family:'Nunito';pointer-events:none;}
+.steam{position:absolute;top:-24px;animation:steamRise 1.8s ease-out infinite;opacity:0;font-size:1rem;}
+
+.pan-btns{display:flex;gap:8px;}
+#serve-btn{background:linear-gradient(135deg,#00B894,#00CEC9);color:white;border:none;border-radius:22px;padding:10px 28px;font-family:'Boogaloo';font-size:1.2rem;cursor:pointer;box-shadow:0 5px 15px rgba(0,184,148,.4);transition:transform .15s;}
+#serve-btn:active{transform:scale(.93);}
+#clear-btn{background:rgba(255,255,255,.85);color:#E8622A;border:2.5px solid #E8622A;border-radius:22px;padding:8px 18px;font-family:'Boogaloo';font-size:1rem;cursor:pointer;}
+#clear-btn:active{transform:scale(.93);}
+
+/* SHELF */
+#shelf{position:fixed;bottom:0;left:0;right:0;height:158px;background:linear-gradient(180deg,#F4C87A,#E8A840);border-top:5px solid #C8864A;z-index:200;padding:10px 8px 8px;}
+#shelf-label{font-size:.6rem;font-weight:900;color:rgba(255,255,255,.65);letter-spacing:2px;text-align:center;margin-bottom:7px;}
+#ing-row{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:0 4px 4px;width:100%;}
+#ing-row::-webkit-scrollbar{display:none;}
+.ing{width:68px;height:68px;border-radius:18px;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1.9rem;cursor:pointer;flex-shrink:0;box-shadow:0 4px 14px rgba(0,0,0,.13);border:3px solid rgba(255,255,255,.9);transition:transform .12s,border-color .2s;position:relative;}
+.ing span{font-size:.5rem;font-weight:800;color:#AAA;letter-spacing:.5px;margin-top:1px;text-transform:uppercase;}
+.ing:active{transform:scale(.85);}
+.ing.needed{border-color:#FFD166;}
+
+/* SCORE POP */
+.pop{position:fixed;z-index:999;pointer-events:none;font-family:'Boogaloo';font-size:1.9rem;animation:popFloat .9s forwards;transform:translateX(-50%);}
+
+/* SCREENS */
+.overlay{position:fixed;inset:0;z-index:800;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+#start-overlay{background:rgba(255,235,195,.97);}
+#tutorial-overlay{background:rgba(255,235,195,.98);}
+#end-overlay{background:rgba(255,235,195,.97);}
+
+.ov-title{font-family:'Boogaloo';font-size:3rem;color:#E8622A;text-shadow:0 4px 0 rgba(0,0,0,.1);margin-bottom:4px;}
+.big-btn{background:linear-gradient(135deg,#E8622A,#FF8C42);color:white;border:none;border-radius:40px;padding:15px 44px;font-family:'Boogaloo';font-size:1.5rem;cursor:pointer;box-shadow:0 6px 20px rgba(232,98,42,.4);}
+.big-btn:active{transform:scale(.95);}
+.big-btn.green{background:linear-gradient(135deg,#00B894,#00CEC9);box-shadow:0 6px 20px rgba(0,184,148,.4);}
+
+/* Tutorial steps */
+.steps{display:flex;flex-direction:column;gap:10px;margin:14px 0 20px;width:100%;max-width:320px;}
+.step{background:white;border-radius:16px;padding:11px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 10px rgba(0,0,0,.07);}
+.snum{width:30px;height:30px;border-radius:50%;background:#E8622A;color:white;font-family:'Boogaloo';font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.stxt{font-size:.85rem;color:#444;line-height:1.4;}
+
+.end-stat{background:white;border-radius:18px;padding:14px 28px;font-family:'Boogaloo';font-size:2.8rem;color:#E8622A;box-shadow:0 4px 15px rgba(0,0,0,.1);margin:8px 0;}
+
+@keyframes urgentPulse{from{box-shadow:0 0 0 0 rgba(232,67,147,.4);}to{box-shadow:0 0 0 9px rgba(232,67,147,0);}}
+@keyframes steamRise{0%{opacity:.5;transform:translateY(0)scale(1);}100%{opacity:0;transform:translateY(-30px)scale(1.5);}}
+@keyframes popFloat{0%{opacity:0;transform:translateX(-50%)translateY(0);}15%{opacity:1;}80%{opacity:1;transform:translateX(-50%)translateY(-55px);}100%{opacity:0;transform:translateX(-50%)translateY(-75px);}}
+</style>
+</head>
+<body>
+<div id="kitchen-bg"></div>
+<div id="counter"></div>
+
+<div id="hud">
+  <div class="chip score">⭐ <span id="sv">0</span></div>
+  <div class="chip served">✅ <span id="cv">0</span></div>
+  <div class="chip timer">⏱ <span id="tv">90</span>s</div>
+</div>
+
+<div id="tickets"></div>
+
+<div id="pan-wrap">
+  <div id="pan">
+    <div id="pan-items"><span id="pan-empty-hint">tap below to add!</span></div>
+    <span class="steam" style="left:25%;animation-delay:0s">💨</span>
+    <span class="steam" style="left:52%;animation-delay:.65s">💨</span>
+    <span class="steam" style="left:73%;animation-delay:1.2s">💨</span>
+  </div>
+  <div class="pan-btns">
+    <button id="serve-btn" onclick="serve()">🍳 SERVE!</button>
+    <button id="clear-btn" onclick="clearPan()">✕ Clear</button>
+  </div>
+</div>
+
+<div id="shelf">
+  <div id="shelf-label">👇 TAP AN INGREDIENT BELOW TO ADD IT TO THE PAN</div>
+  <div id="ing-row"></div>
+</div>
+
+<!-- START -->
+<div id="start-overlay" class="overlay">
+  <div style="font-size:5rem;margin-bottom:6px">👨‍🍳</div>
+  <div class="ov-title">Chef Chaos!</div>
+  <p style="color:#888;font-size:.9rem;margin-bottom:22px;text-align:center">Cook orders before the tickets expire!</p>
+  <button class="big-btn" style="margin-bottom:10px" onclick="showTut()">📖 How to Play</button>
+  <button class="big-btn green" onclick="startGame()">⚡ Start Cooking!</button>
+</div>
+
+<!-- TUTORIAL -->
+<div id="tutorial-overlay" class="overlay" style="display:none">
+  <div class="ov-title" style="font-size:2.3rem">How to Cook 🍳</div>
+  <div class="steps">
+    <div class="step"><div class="snum">1</div><div class="stxt">📋 <b>Look at the tickets</b> at the top — each shows ingredients needed (e.g. 🥚🧀)</div></div>
+    <div class="step"><div class="snum">2</div><div class="stxt">👇 <b>Tap ingredients</b> on the bottom shelf — they go into the pan automatically</div></div>
+    <div class="step"><div class="snum">3</div><div class="stxt">🍳 When pan matches an order, tap the green <b>SERVE!</b> button to complete it</div></div>
+    <div class="step"><div class="snum">4</div><div class="stxt">✕ Tap <b>Clear</b> to empty the pan and start over — tickets turn red when almost expired!</div></div>
+  </div>
+  <button class="big-btn green" onclick="startGame()">Got it — Let's Cook! 🔥</button>
+</div>
+
+<!-- END -->
+<div id="end-overlay" class="overlay" style="display:none">
+  <div style="font-size:4.5rem;margin-bottom:4px" id="end-emoji">🏆</div>
+  <div class="ov-title">Shift Over!</div>
+  <div class="end-stat" id="end-served">0 dishes</div>
+  <p style="color:#888;font-size:1rem;margin-bottom:20px">Score: <b id="end-score" style="color:#E8622A;font-size:1.2rem">0</b></p>
+  <button class="big-btn" onclick="startGame()">Cook Again! 🍳</button>
+</div>
+
+<script>
+const INGS=[
+  {id:'egg',   e:'🥚',name:'EGG'},
+  {id:'bread', e:'🍞',name:'BREAD'},
+  {id:'cheese',e:'🧀',name:'CHEESE'},
+  {id:'tomato',e:'🍅',name:'TOMATO'},
+  {id:'mushroom',e:'🍄',name:'MUSHROOM'},
+  {id:'bacon', e:'🥓',name:'BACON'},
+  {id:'butter',e:'🧈',name:'BUTTER'},
+  {id:'ham',   e:'🍖',name:'HAM'},
+  {id:'onion', e:'🧅',name:'ONION'},
+  {id:'pepper',e:'🫑',name:'PEPPER'},
+];
+
+const RECIPES=[
+  {name:'Egg Toast',   emoji:'🍳',needs:['egg','bread'],pts:10},
+  {name:'Cheesy Egg',  emoji:'🧆',needs:['egg','cheese'],pts:12},
+  {name:'BLT Pan',     emoji:'🥪',needs:['bacon','bread','tomato'],pts:18},
+  {name:'Mush Melt',   emoji:'🫕',needs:['mushroom','cheese','butter'],pts:18},
+  {name:'Full Fry',    emoji:'🍽️',needs:['egg','bacon','mushroom'],pts:22},
+  {name:'Ham Melt',    emoji:'🥪',needs:['ham','cheese','bread'],pts:16},
+  {name:'Veggie Pan',  emoji:'🫕',needs:['pepper','onion','tomato'],pts:14},
+  {name:'Butter Egg',  emoji:'🍳',needs:['egg','butter'],pts:10},
+  {name:'Tomato Cheese',emoji:'🧆',needs:['tomato','cheese'],pts:12},
+  {name:'Bacon Bread', emoji:'🥪',needs:['bacon','bread'],pts:12},
+];
+
+let pan=[],tickets=[],score=0,served=0,timeLeft=90,active=false;
+let spawnInt,tickInt,timerInt;
+
+function buildShelf(){
+  const row=document.getElementById('ing-row');
+  row.innerHTML='';
+  INGS.forEach(ing=>{
+    const d=document.createElement('div');
+    d.className='ing'; d.id='ing-'+ing.id;
+    d.innerHTML=ing.e+'<span>'+ing.name+'</span>';
+    const add=()=>{
+      if(!active) return;
+      if(pan.length>=6){popMsg('Pan full! Serve or clear ✕','#E8622A');return;}
+      pan.push(ing.id);
+      renderPan(); highlightNeeded();
+      d.style.transform='scale(.8)';
+      setTimeout(()=>d.style.transform='',150);
+    };
+    d.addEventListener('click',add);
+    d.addEventListener('touchstart',e=>{e.preventDefault();add();},{passive:false});
+    row.appendChild(d);
+  });
+}
+
+function renderPan(){
+  const el=document.getElementById('pan-items');
+  const hint=document.getElementById('pan-empty-hint');
+  if(pan.length===0){
+    el.innerHTML='';
+    if(!document.getElementById('pan-empty-hint')){
+      const h=document.createElement('span');
+      h.id='pan-empty-hint'; h.textContent='tap below to add!';
+      h.style.cssText='font-size:.65rem;color:rgba(255,255,255,.35);font-family:Nunito;';
+      el.appendChild(h);
+    }
+    return;
+  }
+  el.innerHTML=pan.map(id=>{
+    const ing=INGS.find(i=>i.id===id);
+    return `<span>${ing?ing.e:'?'}</span>`;
+  }).join('');
+  checkPanMatch();
+}
+
+function checkPanMatch(){
+  const sorted=[...pan].sort().join();
+  let matched=false;
+  tickets.forEach((t,i)=>{
+    const match=[...t.needs].sort().join()===sorted;
+    const el=document.querySelectorAll('.ticket')[i];
+    if(el) el.classList.toggle('match',match);
+    if(match) matched=true;
+  });
+  const pb=document.getElementById('pan');
+  pb.style.boxShadow=matched?'0 0 20px 6px rgba(0,184,148,.5)':'';
+}
+
+function highlightNeeded(){
+  document.querySelectorAll('.ing').forEach(el=>el.classList.remove('needed'));
+  tickets.forEach(t=>{
+    const stillNeed=t.needs.filter(id=>!pan.includes(id));
+    stillNeed.forEach(id=>document.getElementById('ing-'+id)?.classList.add('needed'));
+  });
+}
+
+function clearPan(){
+  pan=[];renderPan();
+  document.querySelectorAll('.ing').forEach(el=>el.classList.remove('needed'));
+  document.querySelectorAll('.ticket').forEach(el=>el.classList.remove('match'));
+  document.getElementById('pan').style.boxShadow='';
+}
+
+function serve(){
+  if(!active||pan.length===0) return;
+  const sorted=[...pan].sort().join();
+  let hit=null;
+  tickets.forEach(t=>{if([...t.needs].sort().join()===sorted) hit=t;});
+  if(hit){
+    score+=hit.pts; served++;
+    document.getElementById('sv').textContent=score;
+    document.getElementById('cv').textContent=served;
+    tickets=tickets.filter(t=>t.id!==hit.id);
+    renderTickets(); clearPan();
+    popMsg('+'+hit.pts+' pts 😋','#00B894');
+    flashPan('#00B894');
+  } else {
+    flashPan('#E84393');
+    popMsg('No matching order! ❌','#E84393');
+  }
+}
+
+function flashPan(c){
+  const p=document.getElementById('pan');
+  p.style.boxShadow=`0 0 28px 8px ${c}88`;
+  setTimeout(()=>p.style.boxShadow='',450);
+}
+
+function popMsg(txt,color){
+  const el=document.createElement('div');
+  el.className='pop';
+  el.style.cssText=`left:50%;top:45%;color:${color};font-size:1.5rem;`;
+  el.textContent=txt;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),900);
+}
+
+function spawnTicket(){
+  if(!active||tickets.length>=4) return;
+  const r=RECIPES[Math.floor(Math.random()*RECIPES.length)];
+  const maxT=Math.max(12,28-Math.floor(score/70)*2);
+  tickets.push({id:Date.now()+Math.random(),name:r.name,needs:[...r.needs],pts:r.pts,t:maxT,maxT});
+  renderTickets(); highlightNeeded();
+}
+
+function tickTickets(){
+  let changed=false;
+  tickets.forEach(t=>{
+    t.t=Math.max(0,t.t-.5);
+    if(t.t===0){tickets=tickets.filter(x=>x.id!==t.id);score=Math.max(0,score-3);document.getElementById('sv').textContent=score;changed=true;}
+  });
+  if(changed){renderTickets();highlightNeeded();}
+  else{
+    // Just update timer bars
+    document.querySelectorAll('.ticket').forEach((el,i)=>{
+      const t=tickets[i]; if(!t) return;
+      const bar=el.querySelector('.t-timer');
+      if(bar) bar.style.width=(t.t/t.maxT)*100+'%';
+      el.classList.toggle('urgent',t.t<8);
+    });
+  }
+}
+
+function renderTickets(){
+  const area=document.getElementById('tickets');
+  area.innerHTML='';
+  tickets.forEach(t=>{
+    const d=document.createElement('div');
+    d.className='ticket';
+    d.innerHTML=`<div class="t-name">${t.name}</div><div class="t-need">${t.needs.map(id=>INGS.find(i=>i.id===id).e).join(' ')}</div><div class="t-timer" style="width:${(t.t/t.maxT)*100}%"></div>`;
+    area.appendChild(d);
+  });
+}
+
+function showTut(){
+  document.getElementById('start-overlay').style.display='none';
+  document.getElementById('tutorial-overlay').style.display='flex';
+}
+
+function startGame(){
+  ['start-overlay','end-overlay','tutorial-overlay'].forEach(id=>document.getElementById(id).style.display='none');
+  pan=[];tickets=[];score=0;served=0;timeLeft=90;active=true;
+  document.getElementById('sv').textContent='0';
+  document.getElementById('cv').textContent='0';
+  document.getElementById('tv').textContent='90';
+  renderPan();renderTickets();buildShelf();
+  clearInterval(spawnInt);clearInterval(tickInt);clearInterval(timerInt);
+  spawnTicket();setTimeout(spawnTicket,2000);
+  spawnInt=setInterval(spawnTicket,3500);
+  tickInt=setInterval(tickTickets,500);
+  timerInt=setInterval(()=>{
+    timeLeft--;
+    document.getElementById('tv').textContent=timeLeft;
+    if(timeLeft<=0){active=false;clearInterval(timerInt);clearInterval(spawnInt);clearInterval(tickInt);endGame();}
+  },1000);
+}
+
+function endGame(){
+  const e=['😅','😊','😄','🌟','🏆'];
+  document.getElementById('end-emoji').textContent=e[Math.min(Math.floor(served/4),4)];
+  document.getElementById('end-served').textContent=served+' dishes';
+  document.getElementById('end-score').textContent=score;
+  document.getElementById('end-overlay').style.display='flex';
+}
+</script>
+</body>
+</html>
